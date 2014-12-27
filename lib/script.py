@@ -66,7 +66,7 @@ def run_script(pc, event_id, item_event_id=0):
 		pc.event_id = event_id
 		pc.item_event_id = item_event_id
 		pc.map_send("05dc") #イベント開始の通知
-		pc.map_send("05e8", event_id) #EventID通知 Event送信に対する応答
+		pc.map_send("05e3", event_id) #EventID通知 Event送信に対する応答05e8->05e3
 	if usermaps.map_id_in_range_flygarden(event_id):
 		script_id = usermaps.MIN_FLYGARDEN_ID
 	else:
@@ -629,7 +629,7 @@ def select(pc, option_list, title="", show_cancel=0): #not for command
 	with pc.lock and pc.user.lock:
 		pc.select_result = None
 		#NPCのメッセージのうち、選択肢から選ぶもの
-		pc.map_send("0604", option_list, title, show_cancel)
+		pc.map_send("05f2", option_list, title, show_cancel)
 	while True:
 		with pc.lock:
 			if not pc.online:

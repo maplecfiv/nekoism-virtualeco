@@ -24,6 +24,7 @@ class User:
 		self.name = name
 		self.path = path
 		self.pc_list = []
+		self.launch_client = None
 		self.login_client = None
 		self.map_client = None
 		self.lock = threading.RLock()
@@ -62,6 +63,19 @@ class User:
 		cfg.write(open(os.path.join(
 			self.path, env.USER_CONFIG_NAME
 		), "wb", base=env.USER_DIR))
+	
+	def reset_launch(self):
+		with self.lock:
+			if self.launch_client:
+				self.launch_client._stop()
+			for p in self.pc_list:
+				if not p: continue
+				if p.online:
+					p.reset_login()
+					general.log("[users] reset save", p)
+					p.save()
+			self.launch_client = None
+		self.reset_map()
 	
 	def reset_login(self):
 		with self.lock:

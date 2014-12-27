@@ -26,6 +26,9 @@ def make_0002(ver):
 	"""認証接続確認(s0001)の応答"""
 	return ver
 
+def make_001d():
+	return ""
+	
 def make_001e(word):
 	"""PASS鍵"""
 	return word
@@ -50,17 +53,20 @@ def make_0011():
 def make_0020(user, _type):
 	"""アカウント認証結果/ログアウト開始/ログアウトキャンセル"""
 	if _type == "loginsucess":
-		return "\x00\x00\x00\x00"+pack_int(user.user_id)+"\x00\x00\x00\x00"*2
+		return "\x00\x00\x00\x00"+pack_int(user.user_id)+"\x00\x00\x00\x00"*2+"\x00"
 	elif _type == "loginfaild":
-		return "\xFF\xFF\xFF\xFE"+pack_int(user.user_id)+"\x00\x00\x00\x00"*2
+		return "\xFF\xFF\xFF\xFE"+pack_int(user.user_id)+"\x00\x00\x00\x00"*2+"\x00"
 	elif _type == "isonline":
-		return "\xFF\xFF\xFF\xFB"+pack_int(user.user_id)+"\x00\x00\x00\x00"*2
+		return "\xFF\xFF\xFF\xFB"+pack_int(user.user_id)+"\x00\x00\x00\x00"*2+"\x00"
 	elif _type == "logoutstart":
 		return "\x00"
 	elif _type == "logoutcancel":
 		return "\xF9"
 	else:
 		general.log_error("make_0020: type not exist", _type)
+
+def make_002b():
+	return ""
 
 def make_00a1(_type):
 	"""キャラクター作成結果"""
@@ -125,14 +131,49 @@ def make_0028(user):
 	result += pack_user_byte(user, "lv_job3") #3次職レベル
 	return result
 
-def make_0033(reply_ping=False):
+def make_0032():
+	return ""
+
+def make_0033(_type, _name, _addr):
 	"""接続先通知要求(ログインサーバ/0032)の応答"""
-	if reply_ping:
+	if _type == "ping":
 		result = ""
+	elif _type == "launch":
+		result = pack_str(_name)
+		result += pack_str(_addr)
 	else:
-		result = "\x01"
+		result = "\x09"
 		result += pack_str(env.SERVER_BROADCAST_ADDR)
 		result += pack_int(env.MAP_SERVER_PORT)
+	return result
+
+def make_0034():
+	return ""
+
+def make_00bf(msg):
+	result = pack_int(0)
+	result += pack_str(msg)
+	return result
+
+def make_ffff():
+	"""ffff"""
+	result =  "\x00\x00\x00\x00"
+	result += "\x00\x00\x00\x00"
+	result += "\x00\x00\x00\x00"
+	result += "\x00\x00\x00\x00"
+	result += "\x00\x00\x00\x00"
+	return result
+
+def make_2260():
+	"""2260"""
+	result = "\xff\xff\xff\xff"
+	result += "\x00\x00\x00\x01"
+	return result
+
+def make_2288():
+	"""2288"""
+	result = "\x30"
+	result += "\xff\xff\xff\xff"*48
 	return result
 
 def make_09e9(pc):
@@ -213,9 +254,9 @@ def make_0029(user):
 	result = ""
 	for p in user.pc_list:
 		if p:
-			result += "\x0d"+make_09e9(p)[5:5+13*4]
+			result += "\x0e"+make_09e9(p)[5:5+14*4]
 		else:
-			result += "\x0d"+pack_int(0)*13
+			result += "\x0e"+pack_int(0)*14
 	return result
 
 def make_1239(pc, speed=None):
@@ -329,12 +370,15 @@ def make_0203(item, iid, part, count=None):
 	result += pack_short(0) #unknow
 	result += pack_int(-1) #unknow
 	result += pack_byte(0) #unknow
+	result += pack_byte(0) #unknow
+	result += pack_byte(0) #unknow
 	return result
 
 def make_01ff(pc):
 	"""自分のキャラクター情報"""
 	result = pack_int(pc.id)
 	result += pack_int(pc.id) #固有ID
+	result += pack_byte(0)
 	result += pack_str(pc.name) #名前
 	result += pack_byte(pc.race) #種族
 	result += pack_byte(pc.form) #フォーム
@@ -371,29 +415,33 @@ def make_01ff(pc):
 	result += pack_short(0) #luk
 	result += pack_short(0) #cha
 	result += "\x14" #equip_len?
+	result += pack_int(0) #不明
+	result += pack_int(0) #不明
+	result += pack_int(0) #不明
+	result += pack_int(0) #不明
+	result += pack_int(0) #不明
+	result += pack_int(0) #不明
+	result += pack_int(0) #不明
+	result += pack_int(0) #不明
+	result += pack_int(0) #不明
+	result += pack_int(0) #不明
 	result += pack_short(0) #不明
-	result += pack_int(0) #不明
-	result += pack_int(0) #不明
-	result += pack_int(0) #不明
-	result += pack_int(0) #不明
-	result += pack_int(0) #不明
-	result += pack_int(0) #不明
-	result += pack_int(0) #不明
-	result += pack_int(0) #不明
-	result += pack_int(0) #不明
-	result += pack_int(0) #不明
 	result += pack_int(-1) #憑依対象サーバーキャラID
-	result += pack_byte(0) #憑依場所 ( r177b等も参照
+	result += pack_byte(-1) #憑依場所 ( r177b等も参照
 	result += pack_int(pc.gold) #所持金
-	result += make_09e9(pc)[4:] #装備の\x0dから乗り物の染色値まで
-	result += pack_byte(1) #不明
+	result += pack_byte(0)
+	result += make_09e9(pc)[4:-1] #装備の\x0dから乗り物の染色値まで
+	result += pack_int(1) #射程
 	result += pack_int(0) #不明
-	result += pack_int(2) #不明
-	result += pack_int(0) #不明
-	result += pack_int(0) #不明
+	result += pack_int(2) #mode
+	result += pack_int(0) #mode
+	result += pack_byte(0) #不明
+	result += pack_byte(0) #不明
+	result += pack_byte(0) #不明
 	result += pack_int(0) #unknow
-	result += pack_int(0) #unknow
-	result += pack_short(1) #不明
+	result += pack_int(1) #unknow
+	result += pack_int(1) #unknow
+	result += pack_short(0) #不明
 	return result
 
 def make_03f2(msg_id):
@@ -407,26 +455,26 @@ def make_09ec(pc):
 def make_0221(pc):
 	"""最大HP/MP/SP"""
 	result = pack_int(pc.id)
-	result += "\x04"
-	result += pack_int(pc.status.maxhp)
-	result += pack_int(pc.status.maxmp)
-	result += pack_int(pc.status.maxsp)
+	result += "\x03"
+	result += pack_long(pc.status.maxhp)
+	result += pack_long(pc.status.maxmp)
+	result += pack_long(pc.status.maxsp)
 	result += pack_int(pc.status.maxep)
 	return result
 
 def make_021c(obj):
 	"""現在のHP/MP/SP/EP"""
 	result = pack_int(obj.id)
-	result += "\x04"
-	result += pack_int(obj.status.hp)
-	result += pack_int(obj.status.mp)
-	result += pack_int(obj.status.sp)
+	result += "\x03"
+	result += pack_long(obj.status.hp)
+	result += pack_long(obj.status.mp)
+	result += pack_long(obj.status.sp)
 	result += pack_int(obj.status.ep)
 	return result
 
 def make_0217(pc):
 	"""詳細ステータス"""
-	result = "\x1e" #30
+	result = "\x13" #30
 	result += pack_short(pc.status.speed) #歩く速度
 	result += pack_short(pc.status.minatk1) #最小ATK1
 	result += pack_short(pc.status.minatk2) #最小ATK2
@@ -442,21 +490,21 @@ def make_0217(pc):
 	result += pack_short(pc.status.rightmdef) #追加MDEF
 	result += pack_short(pc.status.shit) #S.HIT(近距離命中率)
 	result += pack_short(pc.status.lhit) #L.HIT(遠距離命中率)
-	result += pack_short(pc.status.mhit) #魔法命中
-	result += pack_short(pc.status.chit) #クリティカル命中
+	#result += pack_short(pc.status.mhit) #魔法命中
+	#result += pack_short(pc.status.chit) #クリティカル命中
 	result += pack_short(pc.status.savoid) #S.AVOID(近距離回避力)
 	result += pack_short(pc.status.lavoid) #L.AVOID(遠距離回避力)
-	result += pack_short(0) #魔法回避力
-	result += pack_short(pc.status.hpheal) #HP回復率
-	result += pack_short(pc.status.mpheal) #MP回復率
-	result += pack_short(pc.status.spheal) #SP回復率
-	result += pack_short(0) #不明
+	#result += pack_short(0) #魔法回避力
+	#result += pack_short(pc.status.hpheal) #HP回復率
+	#result += pack_short(pc.status.mpheal) #MP回復率
+	#result += pack_short(pc.status.spheal) #SP回復率
+	#result += pack_short(0) #不明
 	result += pack_short(pc.status.aspd) #A.SPD(攻撃速度)
 	result += pack_short(pc.status.cspd) #C.SPD(詠唱速度)
-	result += pack_short(0) #不明
-	result += pack_short(0) #不明
-	result += pack_short(0) #不明
-	result += pack_short(0) #不明
+	#result += pack_short(0) #不明
+	#result += pack_short(0) #不明
+	#result += pack_short(0) #不明
+	#result += pack_short(0) #不明
 	return result
 
 def make_0230(pc):
@@ -491,6 +539,7 @@ def make_0244(pc):
 	"""ステータスウィンドウの職業"""
 	result = pack_int(pc.job) #職業ID
 	result += pack_int(0) #ジョイントジョブID
+	result += pack_short(0)
 	return result
 
 def make_0226(pc, job):
@@ -533,6 +582,7 @@ def make_023a(pc):
 	result += pack_byte(pc.lv_job2t) #JobLv(テクニカル)
 	result += pack_byte(pc.lv_job3) #三次職のレベル？
 	result += pack_byte(1) #JobLv(ジョイント？ブリーダー？)
+	result += pack_byte(0)
 	result += pack_short(1) #ボーナスポイント
 	result += pack_short(3) #スキルポイント(1次職)
 	result += pack_short(0) #スキルポイント(エキスパート)
@@ -579,7 +629,7 @@ def make_022d(pc):
 def make_0223(pc):
 	"""属性値""" #send when loading map
 	result = "\x07" #攻撃
-	result += pack_short(0) #新生属性？
+	result += pack_short(0) #新生属性
 	result += pack_short(0) #火
 	result += pack_short(0) #水
 	result += pack_short(0) #風
@@ -587,7 +637,7 @@ def make_0223(pc):
 	result += pack_short(0) #光
 	result += pack_short(0) #闇
 	result += "\x07" #防御
-	result += pack_short(0) #新生属性？
+	result += pack_short(0) #新生属性
 	result += pack_short(0) #火
 	result += pack_short(0) #水
 	result += pack_short(0) #風
@@ -626,7 +676,7 @@ def make_0695():
 
 def make_0236(pc):
 	"""wrp ranking""" #send when loading map
-	result = pack_int(0)
+	result = pack_int(pc.id)
 	result += pack_int(pc.wrprank) #wrpの順位
 	return result
 
@@ -676,10 +726,10 @@ def make_1220(monster):
 	result += pack_unsigned_byte(int(monster.y)) #y
 	result += pack_short(monster.status.speed) #speed
 	result += pack_byte(monster.dir) #dir
-	result += pack_int(monster.status.hp) #hp
-	result += pack_int(monster.status.maxhp) #maxhp
+	result += pack_long(monster.status.hp) #hp
+	result += pack_long(monster.status.maxhp) #maxhp
 	return result
-
+	
 def make_00dd(pc):
 	"""フレンドリスト(自キャラ)"""
 	result = "\x01"#現在の状態
@@ -688,6 +738,10 @@ def make_00dd(pc):
 	#クエスト中、お祭り中、連絡求む
 	result += "\x01"+"\x00"#コメント
 	return result
+
+def make_00de():
+	"""フレンドリスト(自キャラ)"""
+	return ""
 
 def make_0fa6(pc):
 	"""戦闘状態変更通知"""
@@ -738,7 +792,7 @@ def make_020d(pc):
 	result += pack_byte(pc.gender) #性別
 	result += pack_short(pc.hair) #髪型
 	result += pack_byte(pc.haircolor) #髪色
-	result += pack_short(pc.wig) #ウィング
+	result += pack_short(pc.wig) #ウィッグ
 	result += pack_byte(-1) #不明
 	result += pack_short(pc.face) #顔
 	result += pack_byte(pc.base_lv) #転生前のレベル
@@ -760,21 +814,20 @@ def make_020d(pc):
 	result += pack_int(0) #不明
 	result += pack_int(2) #2 r0fa7参照
 	result += pack_int(0) #0 r0fa7参照
+	result += pack_int(0) 
 	result += pack_byte(0) #演習時のエンブレムとか#1東2西4南8北Aヒーロー状態
-	result += pack_byte(0) #メタモーバトルのチーム#1花2岩
+	#result += pack_byte(0) #メタモーバトルのチーム#1花2岩
 	result += pack_byte(0) #1にすると/joyのモーションを取る
 							#（マリオネット変身時。）2にすると〜
 	result += pack_byte(0) #不明
-	result += pack_byte(0) #不明 #353+ 演習関係？
-	result += pack_byte(0) #不明 #353+ 演習関係？
-	result += pack_byte(0) #不明 #353+ 演習関係？
-	result += pack_int(0) #不明 #356+
 	result += pack_byte(0) #ゲストIDかどうか
 	result += pack_byte(pc.lv_base) #レベル（ペットは1固定
 	result += pack_int(pc.wrprank) #WRP順位（ペットは -1固定。
 									#別のパケで主人の値が送られてくる
 	result += pack_int(-1) #不明
 	result += pack_byte(-1) #不明
+	result += pack_short(0)
+	result += pack_int(pc.id)
 	return result
 
 def make_03e9(speaker_id, message):
@@ -968,11 +1021,26 @@ def make_0604(option_list, title, show_cancel=0):
 	result += pack_int(0) #timeout秒に選ばないとキャンセルしたことになる。0の場合制限無し
 	return result
 
+def make_05f2(option_list, title, show_cancel=0):
+	"""NPCのメッセージのうち、選択肢から選ぶもの
+	選択結果はs05f3で通知する"""
+	result = pack_str(title) #ウィンドウタイトル
+	result += pack_array(pack_str, option_list) #選択肢 65以上でエラー
+	result += pack_str("") #選んだときに確認するメッセージのタイトル
+	result += pack_byte(show_cancel) #キャンセルできるかどうか
+	result += pack_int(0) #timeout秒に選ばないとキャンセルしたことになる。0の場合制限無し
+	return result
+	
 def make_0606():
 	"""s0605で選択結果が通知された場合の応答
 	箱を開けた場合は返答しない"""
 	return pack_byte(0) #常に0
 
+def make_05f4():
+	"""s05f3で選択結果が通知された場合の応答
+	箱を開けた場合は返答しない"""
+	return pack_byte(0) #常に0
+	
 def make_122f(pet):
 	"""pet info"""
 	result = pack_int(pet.id)
@@ -986,8 +1054,8 @@ def make_122f(pet):
 	result += pack_unsigned_byte(int(pet.y))
 	result += pack_short(pet.speed)
 	result += pack_byte(pet.dir)
-	result += pack_int(pet.hp)
-	result += pack_int(pet.maxhp)
+	result += pack_long(pet.hp)
+	result += pack_long(pet.maxhp)
 	return result
 
 def make_1234(pet):
@@ -1115,9 +1183,9 @@ def make_0fa1(src, dst, attack_type=0, damage=1, color=1):
 	result = pack_int(src.id)
 	result += pack_int(dst.id)
 	result += pack_byte(attack_type)
-	result += pack_int(damage) #hp damage(回復の場合はマイナス
-	result += pack_int(0) #mp damage
-	result += pack_int(0) #sp damage
+	result += pack_long(damage) #hp damage(回復の場合はマイナス
+	result += pack_long(0) #mp damage
+	result += pack_long(0) #sp damage
 	#アイテム使用やスキル使用結果のHP・MP・SPの色やエフェクト
 	result += pack_int(color)
 	#行動できるようになるまでの長さ(＝モーションの長さ) 2000が標準 ASPDにより短くなる 単位 0.1% ?
@@ -1148,7 +1216,8 @@ def make_00ce(pc, message):
 
 def make_05e2(npc_id):
 	"""show npc"""
-	return pack_unsigned_int(npc_id)
+	result = pack_unsigned_int(npc_id)
+	return result
 
 def make_05e3(npc_id):
 	"""hide npc"""
@@ -1156,12 +1225,19 @@ def make_05e3(npc_id):
 	result += pack_byte(0) #353+
 	result += pack_byte(0) #353+
 	result += pack_byte(0) #353+
+	result += pack_byte(0) #
 	return result
 
 def make_0609(switch, type):
 	"""blackout, whiteout"""
 	result = pack_unsigned_byte(switch) #0: off, 1: on
 	result += pack_unsigned_byte(type) #0: blackout, 1: whiteout
+	return result
+
+def make_1ce8():
+	"""xxxx"""
+	result = pack_byte(16)
+	result += pack_int(0)*16
 	return result
 
 def make_1ce9(motion_ex_id):
@@ -1335,9 +1411,9 @@ def make_1392(pc, target_list, skill_id, skill_lv, damage_list, color_list):
 	result += pack_array(pack_int, target_list) #対象キャラ
 	result += pack_unsigned_byte(int(255))
 	result += pack_unsigned_byte(int(255))
-	result += pack_array(pack_int, damage_list) #HPダメージ
-	result += pack_array(pack_int, (0,)*i) #MPダメージ
-	result += pack_array(pack_int, (0,)*i) #SPダメージ数
+	result += pack_array(pack_long, damage_list) #HPダメージ
+	result += pack_array(pack_long, (0,)*i) #MPダメージ
+	result += pack_array(pack_long, (0,)*i) #SPダメージ数
 	result += pack_array(pack_int, color_list) #数字の色の数
 	result += pack_byte(skill_lv) #スキルLv
 	return result
@@ -1360,12 +1436,15 @@ def make_138d(pc, target_list, x, y, skill_id, skill_lv, damage_list, color_list
 	result += pack_array(pack_int, target_list) #対象キャラ
 	result += pack_unsigned_byte(int(x))
 	result += pack_unsigned_byte(int(y))
-	result += pack_array(pack_int, damage_list) #HPダメージ
-	result += pack_array(pack_int, (0,)*i) #MPダメージ
-	result += pack_array(pack_int, (0,)*i) #SPダメージ数
+	result += pack_array(pack_long, damage_list) #HPダメージ
+	result += pack_array(pack_long, (0,)*i) #MPダメージ
+	result += pack_array(pack_long, (0,)*i) #SPダメージ数
 	result += pack_array(pack_int, color_list) #数字の色の数
 	result += pack_byte(skill_lv) #スキルLv
 	return result
+
+def make_13ec():
+	return "\x32"+"\x00\x00\x00\x00\x00\x00\x00\x00"*50
 
 def make_05dc():
 	"""移動ロック開始(イベント開始)"""

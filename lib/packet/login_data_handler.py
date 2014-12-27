@@ -58,8 +58,9 @@ class LoginDataHandler:
 	def do_0001(self, data_io):
 		#接続・接続確認
 		data = data_io.read()
+		self.send("ffff")
 		general.log("[login] eco version", unpack_unsigned_int(data[:4]))
-		self.send("0002", data) #認証接続確認(s0001)の応答
+		self.send("0002", pack_int(1018)+pack_int(0)) #認証接続確認(s0001)の応答
 		self.send("001e", self.word_front+self.word_back) #PASS鍵
 		general.log("[login] send word",
 			self.word_front.encode("hex"), self.word_back.encode("hex"),
@@ -170,13 +171,15 @@ class LoginDataHandler:
 	def do_0032(self, data_io):
 		#接続先通知要求
 		map_id = io_unpack_int(data_io)
-		self.send("0033") #接続先通知要求(ログインサーバ/0032)の応答
+		self.send("0033", "", "", "") #接続先通知要求(ログインサーバ/0032)の応答
 	
 	def do_002a(self, data_io):
+		self.send("002b")
 		#キャラ番号通知
 		general.log("[login]", "request friend list")
 		if self.pc:
 			self.send("00dd", self.pc) #フレンドリスト(自キャラ)
+			self.send("00de")
 	
 	def do_00c9(self, data_io):
 		#whisper send

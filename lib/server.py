@@ -8,6 +8,7 @@ import threading
 import struct
 from lib import env
 from lib import general
+from lib.packet.launch_data_handler import LaunchDataHandler
 from lib.packet.login_data_handler import LoginDataHandler
 from lib.packet.map_data_handler import MapDataHandler
 from lib.site_packages import rijndael
@@ -205,6 +206,12 @@ class StandardClient(threading.Thread):
 		with self.master.client_list_lock:
 			self.master.client_list.remove(self)
 
+class LaunchClient(StandardClient, LaunchDataHandler):
+	def __init__(self, *args):
+		general.log("[ srv ] launch client", args)
+		LaunchDataHandler.__init__(self)
+		StandardClient.__init__(self, *args)
+
 class LoginClient(StandardClient, LoginDataHandler):
 	def __init__(self, *args):
 		general.log("[ srv ] login client", args)
@@ -216,6 +223,10 @@ class MapClient(StandardClient, MapDataHandler):
 		general.log("[ srv ] map client", args)
 		MapDataHandler.__init__(self)
 		StandardClient.__init__(self, *args)
+
+class LaunchServer(StandardServer):
+	def __init__(self, addr):
+		StandardServer.__init__(self, addr, LaunchClient)
 
 class LoginServer(StandardServer):
 	def __init__(self, addr):
@@ -231,16 +242,21 @@ def init():
 
 def assert_address_not_used():
 	general.log_line("[ srv ] server.assert_address_not_used ... ")
+	general.assert_address_not_used((env.SERVER_BROADCAST_ADDR, env.LAUNCH_SERVER_PORT))
 	general.assert_address_not_used((env.SERVER_BROADCAST_ADDR, env.LOGIN_SERVER_PORT))
 	general.assert_address_not_used((env.SERVER_BROADCAST_ADDR, env.MAP_SERVER_PORT))
 	general.assert_address_not_used((env.SERVER_BROADCAST_ADDR, env.WEB_SERVER_PORT))
 	general.log("done.")
 
 def load():
+	global launchserver
 	global loginserver
 	global mapserver
+	launchserver_bind_addr = (env.SERVER_BIND_ADDR, env.LAUNCH_SERVER_PORT)
 	loginserver_bind_addr = (env.SERVER_BIND_ADDR, env.LOGIN_SERVER_PORT)
 	mapserver_bind_addr = (env.SERVER_BIND_ADDR, env.MAP_SERVER_PORT)
+	general.log("[ srv ] start launch server with\t%s:%d"%launchserver_bind_addr)
+	launchserver = LaunchServer(launchserver_bind_addr)
 	general.log("[ srv ] start login server with\t%s:%d"%loginserver_bind_addr)
 	loginserver = LoginServer(loginserver_bind_addr)
 	general.log("[ srv ] start map server with\t%s:%d"%mapserver_bind_addr)

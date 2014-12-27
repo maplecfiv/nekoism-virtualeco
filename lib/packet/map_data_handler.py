@@ -170,6 +170,7 @@ class MapDataHandler:
 		#接続・接続確認
 		data = data_io.read()
 		general.log("[ map ] eco version", unpack_unsigned_int(data[:4]))
+		self.send("ffff")
 		self.send("000b", data)
 		self.send("000f", self.word_front+self.word_back)
 		general.log("[ map ] send word",
@@ -178,7 +179,7 @@ class MapDataHandler:
 	
 	def do_0032(self, data_io):
 		#接続確認(マップサーバとのみ) 20秒一回
-		self.send("0033", True) #reply_ping=True
+		self.send("0033", "ping", "", "") #reply_ping=True
 	
 	def do_0010(self, data_io):
 		#マップサーバーに認証情報の送信
@@ -222,18 +223,22 @@ class MapDataHandler:
 		self.pc.update_status()
 		self.pc.set_map()
 		self.pc.set_visible(False)
-		self.pc.set_motion(111, False)
+		#self.pc.set_motion(111, False) #motion
 		self.pc.set_coord(self.pc.x, self.pc.y) #on login
 		if not self.pc.map_obj:
 			self.pc.set_map(10023100) #アップタウン東可動橋
 			self.pc.set_coord(random.randint(252, 253), random.randint(126, 129))
-		self.send("1239", self.pc, 10) #キャラ速度通知・変更 #マップ読み込み中は10
-		self.send("1a5f") #右クリ設定
-		self.send_item_list() #インベントリ情報
-		self.send("01ff", self.pc) #自分のキャラクター情報
-		self.send("03f2", 0x04) #システムメッセージ #構えが「叩き」に変更されました
-		self.send("09ec", self.pc) #ゴールド入手
 		
+	def do_0037(self, data_io):
+		self.send("1f72") #もてなしタイニーアイコン
+		self.send("1239", self.pc, 10) #キャラ速度通知・変更 #マップ読み込み中は96
+		self.send("0fa7", self.pc) #キャラのモード変更
+		self.send("1a5f") #右クリ設定
+		self.send_item_list() #インベントリ情報0203
+		self.send("03f2", 0x04) #システムメッセージ #構えが「叩き」に変更されました
+		self.send("01ff", self.pc) #自分のキャラクター情報
+		self.send("1ce8")
+		self.send("1d06", 0x0f) #emotion_ex enumerate
 		self.send("0230", self.pc) #現在CAPA/PAYL
 		self.send("0231", self.pc) #最大CAPA/PAYL
 		self.send("0221", self.pc) #最大HP/MP/SP
@@ -241,50 +246,55 @@ class MapDataHandler:
 		self.send("157c", self.pc) #キャラの状態
 		self.send("0212", self.pc) #ステータス・補正・ボーナスポイント
 		self.send("0217", self.pc) #詳細ステータス
+		self.send("0223", self.pc) #属性値
 		self.send("0226", self.pc, 0) #スキル一覧 一次職
 		self.send("0226", self.pc, 1) #スキル一覧 エキスパ
 		self.send("022d", self.pc) #HEARTスキル
-		self.send("0223", self.pc) #属性値
-		self.send("0244", self.pc) #ステータスウィンドウの職業
-		
-		self.send("022e", self.pc) #リザーブスキル
-		self.send("023a", self.pc) #Lv JobLv ボーナスポイント スキルポイント
-		self.send("0235", self.pc) #EXP/JOBEXP
-		self.send("09e9", self.pc) #キャラの見た目を変更
-		self.send("0fa7", self.pc) #キャラのモード変更
-		self.send("1f72") #もてなしタイニーアイコン
 		self.send("122a") #モンスターID通知
+		self.send("0235", self.pc) #EXP/JOBEXP
+		self.send("023a", self.pc) #Lv JobLv ボーナスポイント スキルポイント
+		self.send("0244", self.pc) #ステータスウィンドウの職業
+		self.send("196e", self.pc) #クエスト回数・時間
 		self.send("1bbc") #スタンプ帳詳細
 		self.send("025d") #不明
 		self.send("0695") #不明
-		for i in xrange(14):
-			self.send("1ce9", i) #useable motion_ex_id
-		self.send("1d06", 0b1111) #emotion_ex enumerate
+		self.send("2260") #2260不明
+		self.send("2288") #2288不明
+		self.send("0221", self.pc) #最大HP/MP/SP
+		self.send("021c", self.pc) #現在のHP/MP/SP/EP
 		self.send("0236", self.pc) #wrp ranking関係
-		self.send("1b67", self.pc) #MAPログイン時に基本情報を全て受信した後に受信される
+		#self.send("196e", self.pc) #クエスト回数・時間
+		#self.send("09ec", self.pc) #ゴールド入手
+		#self.send("022e", self.pc) #リザーブスキル
+		for i in xrange(70):
+			self.send("1ce9", i) #useable motion_ex_id
+		#self.send("1b67", self.pc) #MAPログイン時に基本情報を全て受信した後に受信される
 		general.log("[ map ] send pc info success")
 	
 	def do_11fe(self, data_io):
 		#MAPワープ完了通知
 		general.log("[ map ]", "map load")
 		self.pc.set_visible(True)
-		self.send("1239", self.pc) #キャラ速度通知・変更
-		self.send("196e", self.pc) #クエスト回数・時間
-		#self.send("0259", self.pc) #ステータス試算結果
-		#self.send("1b67", self.pc) #MAPログイン時に基本情報を全て受信した後に受信される
-		
-		self.send("0230", self.pc) #現在CAPA/PAYL
-		self.send("0231", self.pc) #最大CAPA/PAYL
-		self.send("0221", self.pc) #最大HP/MP/SP
-		self.send("021c", self.pc) #現在のHP/MP/SP/EP
+		self.send("09e9", self.pc) #キャラの見た目を変更
 		self.send("157c", self.pc) #キャラの状態
-		self.send("0212", self.pc) #ステータス・補正・ボーナスポイント
-		self.send("0217", self.pc) #詳細ステータス
+		self.send("021c", self.pc) #現在のHP/MP/SP/EP
 		self.send("0226", self.pc, 0) #スキル一覧 一次職
 		self.send("0226", self.pc, 1) #スキル一覧 エキスパ
 		self.send("022d", self.pc) #HEARTスキル
-		self.send("0223", self.pc) #属性値
-		self.send("0244", self.pc) #ステータスウィンドウの職業
+		#2184
+		self.send("13ec")
+		#self.send("196e", self.pc) #クエスト回数・時間
+		self.send("1239", self.pc) #キャラ速度通知・変更
+		#self.send("0259", self.pc) #ステータス試算結果
+		#self.send("1b67", self.pc) #MAPログイン時に基本情報を全て受信した後に受信される
+		
+		#self.send("0230", self.pc) #現在CAPA/PAYL
+		#self.send("0231", self.pc) #最大CAPA/PAYL
+		#self.send("0221", self.pc) #最大HP/MP/SP
+		#self.send("0212", self.pc) #ステータス・補正・ボーナスポイント
+		#self.send("0217", self.pc) #詳細ステータス
+		#self.send("0223", self.pc) #属性値
+		#self.send("0244", self.pc) #ステータスウィンドウの職業
 		
 		self.sync_map()
 		self.pc.unset_pet()
@@ -325,6 +335,10 @@ class MapDataHandler:
 			self.send("0020", self.pc, "logoutstart")
 			self.pc.logout = True
 	
+	def do_001c(self, data_io):
+		#ログアウト
+		self.send("001d")
+		
 	def do_001e(self, data_io):
 		#ログアウト(PASS鍵リセット・マップサーバーとのみ通信)
 		general.log("[ map ] logout")
@@ -401,6 +415,11 @@ class MapDataHandler:
 		event_id = io_unpack_int(data_io)
 		script.run(self.pc, event_id)
 	
+	def do_05e2(self, data_io):
+		#イベント実行
+		event_id = io_unpack_int(data_io)
+		script.run(self.pc, event_id)
+		
 	def do_09e2(self, data_io):
 		#インベントリ移動
 		iid = io_unpack_int(data_io)
@@ -555,6 +574,12 @@ class MapDataHandler:
 		with self.pc.lock:
 			self.pc.select_result = io_unpack_byte(data_io)
 	
+	def do_05f3(self, data_io):
+		#NPCメッセージ(選択肢)の返信
+		self.send("05f4") #s0605で選択結果が通知された場合の応答
+		with self.pc.lock:
+			self.pc.select_result = io_unpack_byte(data_io)
+			
 	def do_041a(self, data_io):
 		#set kanban
 		with self.pc.lock:

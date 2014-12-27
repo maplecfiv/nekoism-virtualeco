@@ -690,9 +690,9 @@ class PC:
 			status.lavoid = int(INT*5/3+AGI+LV/3+3)
 			status.aspd = int(AGI*3+((AGI+63)/9)**2+129)
 			status.cspd = int(DEX*3+((DEX+63)/9)**2+129)
-			status.maxhp = int(VIT*3+(VIT/5)**2+LV*2+(LV/5)**2+50)
-			status.maxmp = int(MAG*3+LV+(LV/9)**2+30)
-			status.maxsp = int(INT+VIT+LV+(LV/9)**2+20)
+			status.maxhp = long(VIT*3+(VIT/5)**2+LV*2+(LV/5)**2+50)
+			status.maxmp = long(MAG*3+LV+(LV/9)**2+30)
+			status.maxsp = long(INT+VIT+LV+(LV/9)**2+20)
 			status.maxpayl = STR*2.0/3.0+VIT/3.0+400
 			status.maxcapa = DEX/5.0+INT/10.0+200
 			status.hpheal = int(100+VIT/3)
@@ -710,9 +710,9 @@ class PC:
 			if not job:
 				general.log_error("[ pc  ] unknow job id:", self.job)
 				return
-			status.maxhp = int(status.maxhp*job.hp_rate)
-			status.maxmp = int(status.maxmp*job.mp_rate)
-			status.maxsp = int(status.maxsp*job.sp_rate)
+			status.maxhp = long(status.maxhp*job.hp_rate)
+			status.maxmp = long(status.maxmp*job.mp_rate)
+			status.maxsp = long(status.maxsp*job.sp_rate)
 			status.maxpayl = status.maxpayl*job.payl_rate
 			status.maxcapa = status.maxcapa*job.capa_rate
 		def get_equip_status(self):
@@ -737,9 +737,9 @@ class PC:
 				status.lavoid += int(item.l_avoid)
 				#status.aspd += int(item.aspd)
 				#status.cspd += int(item.cspd)
-				status.maxhp += int(item.hp)
-				status.maxmp += int(item.mp)
-				status.maxsp += int(item.sp)
+				status.maxhp += long(item.hp)
+				status.maxmp += long(item.mp)
+				status.maxsp += long(item.sp)
 				status.maxpayl += int(item.payl_add)
 				status.maxcapa += int(item.capa_add)
 				status.hpheal += int(item.heal_hp)
