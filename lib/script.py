@@ -524,7 +524,7 @@ def _takeitem(pc, item_id, item_count):
 	general.assert_value_range("item_id", item_id, general.RANGE_UNSIGNED_INT)
 	if countitem(pc, item_id) < item_count:
 		return False
-	while item_count:
+	if item_count:
 		for iid in pc.sort.item:
 			if pc.in_equip(iid):
 				continue
@@ -535,7 +535,7 @@ def _takeitem(pc, item_id, item_count):
 			if item_exist.count > item_count:
 				item_exist.count -= item_count
 				pc.map_send("09cf", item_exist, iid) #アイテム個数変化
-				msg(pc, "%sを%s個失いました"%(item.name, item_count))
+				msg(pc, "%sを%s個失いました"%(item_exist.name, item_count))
 			else:
 				pc.item_pop(iid)
 			break
