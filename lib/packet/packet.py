@@ -1620,4 +1620,9 @@ def make_1bf9(item_id, place):
 	result += pack_byte(0)
 	return result
 
+def make_1cf3():
+	"""お顔スイッチャー"""
+	result = pack_byte(0)
+	return result
+
 name_map = general.get_name_map(globals(), "make_")

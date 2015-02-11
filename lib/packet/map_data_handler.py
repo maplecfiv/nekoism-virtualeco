@@ -876,4 +876,13 @@ class MapDataHandler:
 		skill_lv = io_unpack_byte(data_io)
 		skills.use(self.pc, target_id, x, y, skill_id, skill_lv)
 
+	def do_1cf2(self, data_io):
+		#お顔スイッチャー
+		self.send("1cf3")
+
+	def do_1cf4(self, data_io):
+		#お顔スイッチャー
+		unk = io_unpack_int(data_io)
+		face_id = io_unpack_unsigned_short(data_io)
+		script.face(self.pc, face_id)
 MapDataHandler.name_map = general.get_name_map(MapDataHandler.__dict__, "do_")
