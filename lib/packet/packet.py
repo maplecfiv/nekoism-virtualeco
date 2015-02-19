@@ -279,11 +279,12 @@ def make_1a5f():
 def make_0203(item, iid, part, count=None):
 	"""インベントリ情報"""
 	result = pack_byte(0) #unknown #常に0
-	result += "\xd6" #データサイズ
+	result += "\xce" #データサイズ
 	result += pack_int(iid) #インベントリID
 	result += pack_unsigned_int(item.item_id) #アイテムID
 	result += pack_int(0) #見た目,フィギュア,スケッチ情報
 	result += pack_byte(part) #アイテムの場所
+	result += pack_int(0)
 	result += pack_int(0x01) #鑑定済み:0x01 カードロック？:0x20
 	result += pack_short(item.durability_max) #耐久度
 	result += pack_short(item.durability_max) #最大耐久度or最大親密度
@@ -303,14 +304,14 @@ def make_0203(item, iid, part, count=None):
 	result += pack_unsigned_short(count if count != None else item.count) #個数
 	result += pack_unsigned_int(item.price) #ゴーレム販売価格
 	result += pack_short(0) #ゴーレム販売個数
-	result += pack_short(0) #憑依重量
+	#result += pack_short(0) #憑依重量
 	result += pack_short(0) #最大重量
 	result += pack_short(0) #最大容量
-	result += pack_short(0) #位置的に発動Skill？
-	result += pack_short(0) #使用可能Skill
-	result += pack_short(0) #位置的にパッシブスキル？
-	result += pack_short(0) #位置的に憑依時可能Skill？
-	result += pack_short(0) #位置的に憑依パッシブSkill？
+	#result += pack_short(0) #位置的に発動Skill？
+	#result += pack_short(0) #使用可能Skill
+	#result += pack_short(0) #位置的にパッシブスキル？
+	#result += pack_short(0) #位置的に憑依時可能Skill？
+	#result += pack_short(0) #位置的に憑依パッシブSkill？
 	result += pack_short(item.str) #str
 	result += pack_short(item.mag) #mag
 	result += pack_short(item.vit) #vit
@@ -358,7 +359,7 @@ def make_0203(item, iid, part, count=None):
 	result += pack_short(item.stan) #気絶
 	result += pack_short(0) #ペットステ（攻撃速度
 	result += pack_short(0) #ペットステ（詠唱速度
-	result += pack_short(0) #ペットステ？（スタミナ回復力？
+	#result += pack_short(0) #ペットステ？（スタミナ回復力？
 	result += pack_unsigned_int(item.price) #ゴーレム露店の買取価格
 	result += pack_short(0) #ゴーレム露店の買取個数
 	result += pack_unsigned_int(item.price) #商人露店の販売価格
@@ -366,8 +367,8 @@ def make_0203(item, iid, part, count=None):
 	result += pack_int(0) #何かの価格？ 商人露店の買取価格の予約？
 	result += pack_short(0) #何かの個数？
 	result += pack_short(1) #unknow
-	result += pack_byte(1) #unknow
-	result += pack_short(0) #unknow
+	result += pack_str("") #名前
+	result += pack_byte(0) #0固定？
 	result += pack_int(-1) #unknow
 	result += pack_byte(0) #unknow
 	result += pack_byte(0) #unknow
@@ -440,6 +441,7 @@ def make_01ff(pc):
 	result += pack_byte(0) #不明
 	result += pack_int(0) #unknow
 	result += pack_int(1) #unknow
+	result += pack_byte(0) #不明
 	result += pack_int(1) #unknow
 	result += pack_short(0) #不明
 	return result
@@ -509,30 +511,30 @@ def make_0217(pc):
 
 def make_0230(pc):
 	"""現在CAPA/PAYL"""
-	result = "\x04"
-	result += pack_int(int(pc.status.capa*10)) #CAPA(x0.1)
-	result += pack_int(int(pc.status.rightcapa*10)) #右手かばんCAPA(x0.1)
-	result += pack_int(int(pc.status.leftcapa*10)) #左手かばんCAPA(x0.1)
-	result += pack_int(int(pc.status.backcapa*10)) #背中CAPA(x0.1)
-	result += "\x04"
+	#result = "\x04"
+	result = pack_int(int(pc.status.capa*10)) #CAPA(x0.1)
+	#result += pack_int(int(pc.status.rightcapa*10)) #右手かばんCAPA(x0.1)
+	#result += pack_int(int(pc.status.leftcapa*10)) #左手かばんCAPA(x0.1)
+	#result += pack_int(int(pc.status.backcapa*10)) #背中CAPA(x0.1)
+	#result += "\x04"
 	result += pack_int(int(pc.status.payl*10)) #PAYL(x0.1)
-	result += pack_int(int(pc.status.rightpayl*10)) #右手かばんPAYL(x0.1)
-	result += pack_int(int(pc.status.leftpayl*10)) #左手かばんPAYL(x0.1)
-	result += pack_int(int(pc.status.backpayl*10)) #背中PAYL(x0.1)
+	#result += pack_int(int(pc.status.rightpayl*10)) #右手かばんPAYL(x0.1)
+	#result += pack_int(int(pc.status.leftpayl*10)) #左手かばんPAYL(x0.1)
+	#result += pack_int(int(pc.status.backpayl*10)) #背中PAYL(x0.1)
 	return result
 
 def make_0231(pc):
 	"""最大CAPA/PAYL"""
-	result = "\x04"
-	result += pack_int(int(pc.status.maxcapa*10)) #CAPA(x0.1)
-	result += pack_int(int(pc.status.maxrightcapa*10)) #右手かばんCAPA(x0.1)
-	result += pack_int(int(pc.status.maxleftcapa*10)) #左手かばんCAPA(x0.1)
-	result += pack_int(int(pc.status.maxbackcapa*10)) #背中CAPA(x0.1)
-	result += "\x04"
+	#result = "\x04"
+	result = pack_int(int(pc.status.maxcapa*10)) #CAPA(x0.1)
+	#result += pack_int(int(pc.status.maxrightcapa*10)) #右手かばんCAPA(x0.1)
+	#result += pack_int(int(pc.status.maxleftcapa*10)) #左手かばんCAPA(x0.1)
+	#result += pack_int(int(pc.status.maxbackcapa*10)) #背中CAPA(x0.1)
+	#result += "\x04"
 	result += pack_int(int(pc.status.maxpayl*10)) #PAYL(x0.1)
-	result += pack_int(int(pc.status.maxrightpayl*10)) #右手かばんPAYL(x0.1)
-	result += pack_int(int(pc.status.maxleftpayl*10)) #左手かばんPAYL(x0.1)
-	result += pack_int(int(pc.status.maxbackpayl*10)) #背中PAYL(x0.1)
+	#result += pack_int(int(pc.status.maxrightpayl*10)) #右手かばんPAYL(x0.1)
+	#result += pack_int(int(pc.status.maxleftpayl*10)) #左手かばんPAYL(x0.1)
+	#result += pack_int(int(pc.status.maxbackpayl*10)) #背中PAYL(x0.1)
 	return result
 
 def make_0244(pc):
