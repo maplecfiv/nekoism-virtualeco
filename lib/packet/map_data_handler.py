@@ -867,6 +867,10 @@ class MapDataHandler:
 			general.log("[ map ] set dem parts failed", self.pc)
 			self.send("09e8", iid, -1, -2, 1) #アイテム装備
 	
+	def do_026c(self, data_io):
+		#見た目変更ウィンドウ
+		self.send("026d")
+
 	def do_1387(self, data_io):
 		#スキル使用
 		skill_id = io_unpack_unsigned_short(data_io)
@@ -882,7 +886,22 @@ class MapDataHandler:
 
 	def do_1cf4(self, data_io):
 		#お顔スイッチャー
-		unk = io_unpack_int(data_io)
+		iid = io_unpack_int(data_io)
 		face_id = io_unpack_unsigned_short(data_io)
+		script.takeitem_byiid(self.pc, iid, 1)
 		script.face(self.pc, face_id)
+
+	def do_0615(self, data_io):
+		#ヘアサロン
+		iid = io_unpack_int(data_io)
+		hair_id = io_unpack_unsigned_short(data_io)
+		wig_id = io_unpack_short(data_io)
+		if hair_id != 65535:
+			if iid != -1:#オプション変更時
+				script.takeitem_byiid(self.pc, iid, 1)
+			with self.pc.lock:
+				self.pc.hair = hair_id
+				self.pc.wig = wig_id
+			script.update(self.pc)
+
 MapDataHandler.name_map = general.get_name_map(MapDataHandler.__dict__, "do_")

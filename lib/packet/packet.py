@@ -832,6 +832,54 @@ def make_020d(pc):
 	result += pack_int(pc.id)
 	return result
 
+def make_026d():
+	result = pack_byte(8)#顔
+	result += pack_short(-1)
+	result += pack_short(-1)
+	result += pack_short(-1)
+	result += pack_short(-1)
+	result += pack_short(-1)
+	result += pack_short(-1)
+	result += pack_short(-1)
+	result += pack_short(-1)
+	result += pack_byte(8)#髪
+	result += pack_short(-1)
+	result += pack_short(-1)
+	result += pack_short(-1)
+	result += pack_short(-1)
+	result += pack_short(-1)
+	result += pack_short(-1)
+	result += pack_short(-1)
+	result += pack_short(-1)
+	result += pack_byte(8)#付け毛
+	result += pack_short(-1)
+	result += pack_short(-1)
+	result += pack_short(-1)
+	result += pack_short(-1)
+	result += pack_short(-1)
+	result += pack_short(-1)
+	result += pack_short(-1)
+	result += pack_short(-1)
+	result += pack_byte(8)#期限
+	result += pack_int(-1)
+	result += pack_int(-1)
+	result += pack_int(-1)
+	result += pack_int(-1)
+	result += pack_int(-1)
+	result += pack_int(-1)
+	result += pack_int(-1)
+	result += pack_int(-1)
+	result += pack_byte(8)#髪色
+	result += pack_byte(-1)
+	result += pack_byte(-1)
+	result += pack_byte(-1)
+	result += pack_byte(-1)
+	result += pack_byte(-1)
+	result += pack_byte(-1)
+	result += pack_byte(-1)
+	result += pack_byte(-1)
+	return result
+
 def make_03e9(speaker_id, message):
 	"""オープンチャット・システムメッセージ"""
 	result = pack_int(speaker_id)
@@ -1625,6 +1673,11 @@ def make_1bf9(item_id, place):
 def make_1cf3():
 	"""お顔スイッチャー"""
 	result = pack_byte(0)
+	return result
+
+def make_0614(type):
+	"""ヘアサロン"""
+	result = pack_int(type)
 	return result
 
 name_map = general.get_name_map(globals(), "make_")
