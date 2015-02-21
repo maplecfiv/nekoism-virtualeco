@@ -331,7 +331,7 @@ class PC:
 					self._unset_equip(i, 0x02)
 	
 	def in_equip(self, iid):
-		if iid == 0:
+		if iid == 0: 
 			return
 		for equip in (self.equip_std, self.equip_dem):
 			for attr in general.EQUIP_ATTR_LIST:

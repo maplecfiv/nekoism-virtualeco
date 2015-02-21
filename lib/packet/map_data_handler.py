@@ -266,7 +266,7 @@ class MapDataHandler:
 		#self.send("196e", self.pc) #クエスト回数・時間
 		#self.send("09ec", self.pc) #ゴールド入手
 		#self.send("022e", self.pc) #リザーブスキル
-		for i in xrange(70):
+		for i in xrange(84):
 			self.send("1ce9", i) #useable motion_ex_id
 		#self.send("1b67", self.pc) #MAPログイン時に基本情報を全て受信した後に受信される
 		general.log("[ map ] send pc info success")
@@ -891,6 +891,10 @@ class MapDataHandler:
 		script.takeitem_byiid(self.pc, iid, 1)
 		script.face(self.pc, face_id)
 
+	def do_1cf6(self, data_io):
+		#お顔スイッチャー
+		self.send("1cf7", self.pc, self.pc.face)
+
 	def do_0615(self, data_io):
 		#ヘアサロン
 		iid = io_unpack_int(data_io)
@@ -903,5 +907,11 @@ class MapDataHandler:
 				self.pc.hair = hair_id
 				self.pc.wig = wig_id
 			script.update(self.pc)
+
+	def do_121d(self, data_io):
+		"""待機モーション変更"""
+		motion = io_unpack_short(data_io)
+		self.send("121e", self.pc, motion)
+
 
 MapDataHandler.name_map = general.get_name_map(MapDataHandler.__dict__, "do_")

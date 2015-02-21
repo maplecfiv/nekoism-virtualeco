@@ -761,6 +761,7 @@ def make_121c(pc, npc_id=None, npc_motion_id=None, npc_motion_loop=None):
 		pc.motion_loop if (npc_motion_loop is None) else
 		(1 if npc_motion_loop else 0)) #ループさせるかどうか
 	result += pack_byte(0) #不明
+	result += pack_int(0) #不明
 	return result
 
 def make_1211(pc):
@@ -922,6 +923,7 @@ def make_03f7(message, npc_name, npc_motion_id, npc_id, npc_visible=True):
 	result += pack_str(message)
 	result += pack_unsigned_short(npc_motion_id)
 	result += pack_str(npc_name)
+	result += pack_byte(0) #unknow
 	return result
 
 def make_09e8(iid, part, _result, r):
@@ -1254,7 +1256,9 @@ def make_1217(pc, emotion_id):
 
 def make_1d0c(pc, emotion_ex_id):
 	"""emotion_ex"""
-	return pack_int(pc.id)+pack_unsigned_byte(emotion_ex_id)
+	result = pack_int(pc.id)
+	result += pack_unsigned_byte(emotion_ex_id)
+	return result
 
 def make_00ca(name, result):
 	"""whisper failed"""
@@ -1675,9 +1679,23 @@ def make_1cf3():
 	result = pack_byte(0)
 	return result
 
+def make_1cf7(pc, face_id):
+	"""お顔スイッチャー"""
+	result = pack_int(pc.id)
+	result += pack_short(face_id)
+	return result
+
 def make_0614(type):
 	"""ヘアサロン"""
 	result = pack_int(type)
 	return result
+
+def make_121e(pc, motion):
+	"""待機モーション変更"""
+	result = pack_int(pc.id)
+	result += pack_short(motion)
+	return result
+
+
 
 name_map = general.get_name_map(globals(), "make_")
