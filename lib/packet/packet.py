@@ -1258,6 +1258,7 @@ def make_1d0c(pc, emotion_ex_id):
 	"""emotion_ex"""
 	result = pack_int(pc.id)
 	result += pack_unsigned_byte(emotion_ex_id)
+	result += pack_short(0)
 	return result
 
 def make_00ca(name, result):
@@ -1638,7 +1639,7 @@ def make_1be4(pc):
 def make_13bc(weather):
 	"""飛空庭の天候"""
 	return pack_byte(weather) #0なし1雨2雪
- 
+
 def make_13bd(sky):
 	"""飛空庭の天体"""
 	return pack_byte(sky) #0デフォ1夕2夜3宇宙 #0~14
