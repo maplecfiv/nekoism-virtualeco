@@ -833,6 +833,15 @@ def make_020d(pc):
 	result += pack_int(pc.id)
 	return result
 
+def make_0210(pc):
+	result = pack_short(pc.hair)
+	result += pack_byte(pc.haircolor) #髪色
+	result += pack_short(pc.wig) #ウィッグ
+	result += pack_byte(0)
+	result += pack_short(pc.face) #顔
+	return result
+
+
 def make_026d():
 	result = pack_byte(8)#顔
 	result += pack_short(-1)
