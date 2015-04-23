@@ -12,7 +12,8 @@ class Pet:
 	def __init__ (self, d):
 		d.update(self.__dict__)
 		self.__dict__ = d
-		self.hp = self.maxhp
+		self.hp = 1000 #self.maxhp
+		self.maxhp = 1000
 		self.map_id = 0
 		self.map_obj = None
 	
@@ -31,7 +32,7 @@ class Pet:
 		self.rawx = 0
 		self.rawy = 0
 		self.rawdir = 0
-		self.speed = 310 #410
+		#self.speed = 310 #410
 		self.motion_id = 111
 		self.motion_loop = False
 		self.standby = False

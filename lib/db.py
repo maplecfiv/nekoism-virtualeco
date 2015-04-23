@@ -23,29 +23,52 @@ def get_raw_dict(name):
 	row_map_ext = dbmap.DATABASE_ROW_MAP_EXT[name]
 	min_length = float("-inf")
 	
+	#with open(db_path, "rb") as db_file:
+		#line_first = db_file.readline()
+		#if line_first.startswith("\xef\xbb\xbf"):
+		#	line_first = line_first[3:]
+		#attr_table = line_first.strip().split(",")
+		#for i, attr in enumerate(attr_table):
+		#	attr = attr.strip()
+		#	if not attr:
+		#		continue
+		#	value = row_map_raw.get(attr)
+		#	if value is None:
+		#		general.log_error("attr not define:", attr)
+		#		continue
+		#	if value is NULL:
+		#		continue
+		#	if i > min_length:
+		#		min_length = i
+		#	row_map[i] = value
+		#min_length += 1
+		#row_map.update(row_map_ext)
 	with open(db_path, "rb") as db_file:
-		line_first = db_file.readline()
-		if line_first.startswith("\xef\xbb\xbf"):
-			line_first = line_first[3:]
-		attr_table = line_first.strip().split(",")
-		for i, attr in enumerate(attr_table):
-			attr = attr.strip()
-			if not attr:
-				continue
-			value = row_map_raw.get(attr)
-			if value is None:
-				general.log_error("attr not define:", attr)
-				continue
-			if value is NULL:
-				continue
-			if i > min_length:
-				min_length = i
-			row_map[i] = value
-		min_length += 1
-		row_map.update(row_map_ext)
-		
 		for line in db_file:
-			if line.startswith("#"):
+			if not line.startswith("#") and not line.startswith("\xef\xbb\xbf"):
+				break
+			if line.startswith("\xef\xbb\xbf"):
+				line = line[3:]
+			attr_table = line.strip().split(",")
+			for i, attr in enumerate(attr_table):
+				attr = attr.strip()
+				if not attr:
+					continue
+				value = row_map_raw.get(attr)
+				if value is None:
+					#general.log_error("attr not define:", attr)
+					continue
+				if value is NULL:
+					continue
+				if i > min_length:
+					min_length = i
+				row_map[i] = value
+			min_length += 1
+		row_map.update(row_map_ext)
+
+	with open(db_path, "rb") as db_file:
+		for line in db_file:
+			if line.startswith("#") or line.startswith("\xef\xbb\xbf"):
 				continue
 			if line in ("\n", "\r\n"):
 				continue
@@ -89,12 +112,13 @@ def load():
 	import data.item, data.job, data.npc, data.shop, data.skill
 	import obj.map, obj.monster, obj.pet
 	
-	global item, job, map_obj, monster_obj, npc, pet_obj, shop, skill
+	global item, job, map_obj, monster_obj, npc, pet_obj, partner_obj, shop, skill
 	item = load_database("item", data.item.Item)
 	job = load_database("job", data.job.Job)
 	map_obj = load_database("map", obj.map.Map)
 	monster_obj = load_database("monster", obj.monster.Monster)
 	npc = load_database("npc", data.npc.Npc)
 	pet_obj = load_database("pet", obj.pet.Pet)
+	partner_obj = load_database("partner", obj.pet.Pet)
 	shop = load_database("shop", data.shop.Shop)
 	skill = load_database("skill", data.skill.Skill)

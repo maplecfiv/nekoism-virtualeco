@@ -22,6 +22,7 @@ DATABASE_PATH = {
 	"monster": "./data/monster.csv",
 	"npc": "./data/npc.csv",
 	"pet": "./data/pet.csv",
+	"partner": "./data/partner_info.csv",
 	"shop": "./data/shop.csv",
 	"skill": "./data/skill.csv",
 }
@@ -274,8 +275,9 @@ DATABASE_ROW_MAP_RAW = {
 	},
 	"pet": {
 		"#PETID": (dbint, "pet_id"),
-		"ペット名（ペット名は10文字まで）": (dbstr, "name"),
+		"ペット名": (dbstr, "name"),
 		"PICTID": (dbint, "pict_id"),
+		"移動速度": (dbint, "speed"),
 		"種別ID": NULL,
 		"体の幅": NULL,
 		"体の長さ": NULL,
@@ -296,6 +298,12 @@ DATABASE_ROW_MAP_RAW = {
 		"ドロップアイテム": NULL,
 		"騎乗者非表示設定": NULL,
 		"備考": NULL,
+	},
+	"partner": {
+		"#パートナーID": (dbint, "pet_id"),
+		"パートナー名": (dbstr, "name"),
+		"PICTID": (dbint, "pict_id"),
+		"移動速度": (dbint, "speed"),
 	},
 	"shop": {
 		"#ショップID": (dbint, "shop_id"),
@@ -362,6 +370,7 @@ DATABASE_ROW_MAP_EXT = {
 	"pet": {
 		19: (dbint, "maxhp"),
 	},
+	"partner": {},
 	"shop": {},
 	"skill": {},
 }

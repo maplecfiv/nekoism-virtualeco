@@ -93,6 +93,8 @@ PET_TYPE_LIST = (
 	"PET",
 	"RIDE_PET",
 	"PET_NEKOMATA",
+	"PARTNER",
+	"RIDE_PARTNER",
 )
 HEAD_TYPE_LIST = (
 	"HELM",
@@ -272,7 +274,9 @@ def get_item(item_id):
 def get_pet(pet_id):
 	pet = db.pet_obj.get(pet_id)
 	if not pet:
-		return
+		pet = db.partner_obj.get(pet_id)
+		if not pet:
+			return
 	return pet
 def get_monster(monster_id):
 	monster = db.monster_obj.get(monster_id)
