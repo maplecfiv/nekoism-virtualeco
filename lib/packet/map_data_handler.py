@@ -255,8 +255,9 @@ class MapDataHandler:
 		self.send("023a", self.pc) #Lv JobLv ボーナスポイント スキルポイント
 		self.send("0244", self.pc) #ステータスウィンドウの職業
 		self.send("196e", self.pc) #クエスト回数・時間
-		self.send("1bbc") #スタンプ帳詳細
-		self.send("025d") #不明
+		self.send("1bbc", 0) #スタンプ帳詳細
+		self.send("1bbc", 1) #スタンプ帳詳細
+		self.send("025d") #限界突破ステータス
 		self.send("0695") #不明
 		self.send("2260") #2260不明
 		self.send("2288") #2288不明

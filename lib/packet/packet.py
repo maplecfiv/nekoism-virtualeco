@@ -131,6 +131,9 @@ def make_0028(user):
 	result += pack_user_byte(user, "lv_job3") #3次職レベル
 	return result
 
+def make_0030():
+	return pack_int(0)
+
 def make_0032():
 	return ""
 
@@ -441,8 +444,8 @@ def make_01ff(pc):
 	result += pack_byte(0) #不明
 	result += pack_int(0) #unknow
 	result += pack_int(1) #unknow
-	result += pack_byte(0) #不明
-	result += pack_int(1) #unknow
+	#result += pack_byte(0) #不明
+	result += pack_int(5) #unknow
 	result += pack_short(0) #不明
 	return result
 
@@ -652,8 +655,9 @@ def make_122a(mob_id_list=()):
 	"""モンスターID通知""" #send when loading map and after load and make mob
 	return pack_array(pack_int, mob_id_list) #or fill to 40
 
-def make_1bbc():
+def make_1bbc(page):
 	"""スタンプ帳詳細""" #send when loading map
+	result += pack_int(page)
 	result = "\x0b" #ジャンル数 常に0b
 	result += pack_short(0) #スペシャル
 	result += pack_short(0) #プルル

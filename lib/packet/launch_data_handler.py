@@ -101,4 +101,8 @@ class LaunchDataHandler:
 		self.send("0033", "launch", "local3", "127.0.0.1:13000")
 		self.send("0034")
 	
+	def do_002f(self, data_io):
+		#20150423
+		self.send("0030") #応答
+
 LaunchDataHandler.name_map = general.get_name_map(LaunchDataHandler.__dict__, "do_")
