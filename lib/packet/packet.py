@@ -657,8 +657,8 @@ def make_122a(mob_id_list=()):
 
 def make_1bbc(page):
 	"""スタンプ帳詳細""" #send when loading map
-	result += pack_int(page)
-	result = "\x0b" #ジャンル数 常に0b
+	result = pack_int(page)
+	result += "\x0b" #ジャンル数 常に0b
 	result += pack_short(0) #スペシャル
 	result += pack_short(0) #プルル
 	result += pack_short(0) #平原
@@ -818,6 +818,7 @@ def make_020d(pc):
 	result += pack_int(pc.size) #chara size (1000が標準
 	result += pack_unsigned_short(pc.motion_id) #モーション#ただし座り(135)や移動や
 										#武器・騎乗ペットによるモーションの場合0
+	result += pack_byte(0) #不明	
 	result += pack_int(0) #不明
 	result += pack_int(2) #2 r0fa7参照
 	result += pack_int(0) #0 r0fa7参照
