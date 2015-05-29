@@ -4,7 +4,9 @@ import sys
 import os
 import traceback
 import __builtin__
+import codecs
 from lib import env
+
 
 def get_raw_dict(name):
 	db_path = dbmap.DATABASE_PATH[name]
@@ -17,38 +19,33 @@ def get_raw_dict(name):
 				return raw_dict
 	general.log("Update", name, "database dump ...")
 	
+	db_file = open(db_path, "rb")
+	line_first = db_file.readline()
+	db_file.close()
+	if line_first.startswith("\xef\xbb\xbf"):
+		raw_dict = read_encoding(name, "utf_8_sig")
+	else:
+		raw_dict = read_encoding(name, "cp932")
+	
+	general.save_dump(
+		db_path,
+		{"ver": env.DATABASE_FORMAT_VERSION, "raw_dict": raw_dict},
+		env.DATABASE_DIR,
+	)
+	return raw_dict
+
+def read_encoding(name, enc):
 	raw_dict = {}
+	db_path = dbmap.DATABASE_PATH[name]
 	row_map = {}
 	row_map_raw = dbmap.DATABASE_ROW_MAP_RAW[name]
 	row_map_ext = dbmap.DATABASE_ROW_MAP_EXT[name]
 	min_length = float("-inf")
-	
-	#with open(db_path, "rb") as db_file:
-		#line_first = db_file.readline()
-		#if line_first.startswith("\xef\xbb\xbf"):
-		#	line_first = line_first[3:]
-		#attr_table = line_first.strip().split(",")
-		#for i, attr in enumerate(attr_table):
-		#	attr = attr.strip()
-		#	if not attr:
-		#		continue
-		#	value = row_map_raw.get(attr)
-		#	if value is None:
-		#		general.log_error("attr not define:", attr)
-		#		continue
-		#	if value is NULL:
-		#		continue
-		#	if i > min_length:
-		#		min_length = i
-		#	row_map[i] = value
-		#min_length += 1
-		#row_map.update(row_map_ext)
-	with open(db_path, "rb") as db_file:
+
+	with codecs.open(db_path, "r", enc) as db_file:
 		for line in db_file:
-			if not line.startswith("#") and not line.startswith("\xef\xbb\xbf"):
+			if not line.startswith("#"):
 				break
-			if line.startswith("\xef\xbb\xbf"):
-				line = line[3:]
 			attr_table = line.strip().split(",")
 			for i, attr in enumerate(attr_table):
 				attr = attr.strip()
@@ -63,12 +60,12 @@ def get_raw_dict(name):
 				if i > min_length:
 					min_length = i
 				row_map[i] = value
-			min_length += 1
+			#min_length += 1
 		row_map.update(row_map_ext)
 
-	with open(db_path, "rb") as db_file:
+	with codecs.open(db_path, "r", enc) as db_file:
 		for line in db_file:
-			if line.startswith("#") or line.startswith("\xef\xbb\xbf"):
+			if line.startswith("#"):
 				continue
 			if line in ("\n", "\r\n"):
 				continue
@@ -83,13 +80,8 @@ def get_raw_dict(name):
 					general.log_error("attr:", value)
 					raise
 			raw_dict[int(row[0])] = d
-	
-	general.save_dump(
-		db_path,
-		{"ver": env.DATABASE_FORMAT_VERSION, "raw_dict": raw_dict},
-		env.DATABASE_DIR,
-	)
 	return raw_dict
+
 
 def load_database(name, obj):
 	db_path = dbmap.DATABASE_PATH[name]
@@ -114,6 +106,9 @@ def load():
 	
 	global item, job, map_obj, monster_obj, npc, pet_obj, partner_obj, shop, skill
 	item = load_database("item", data.item.Item)
+	item_tmp = load_database("item3", data.item.Item)
+	item.update(item_tmp)
+
 	job = load_database("job", data.job.Job)
 	map_obj = load_database("map", obj.map.Map)
 	monster_obj = load_database("monster", obj.monster.Monster)
