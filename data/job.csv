@@ -1,4 +1,4 @@
-#job_id,	job_name,		hp_rate,	mp_rate,	sp_rate,	payl_rate,	capa_rate
+﻿#job_id,	job_name,		hp_rate,	mp_rate,	sp_rate,	payl_rate,	capa_rate
 0,		ノービス,		1.00,	1.00,	1.00,	0.7,			0.85
 120,		ジョーカー,		3.00,	3.00,	3.00,	0.7,			0.85
 

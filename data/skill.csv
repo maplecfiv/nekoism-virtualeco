@@ -1,4 +1,4 @@
-﻿"ID","Name","説明","Active","MaxLv","Lv","MP","SP","HP","射程","ターゲット","ターゲット2","範囲","適応","Zero","Flag","?","nTarget2","射程","0","MarkTarget","MarkTarget","MarkCaster","icon","MarkTarget","0","mark?","MarkRound","MarknewObj","AnimStart","AnimLoop","AnimAttack",        
+﻿#"ID","Name","説明","Active","MaxLv","Lv","MP","SP","HP","射程","ターゲット","ターゲット2","範囲","適応","Zero","Flag","?","nTarget2","射程","0","MarkTarget","MarkTarget","MarkCaster","icon","MarkTarget","0","mark?","MarkRound","MarknewObj","AnimStart","AnimLoop","AnimAttack",        
 00100,最大HP上昇,パッシブスキル$R最大HPを上昇させる,0,5,1,0,0,0,-1,1,0,0,0,0,0,0,0,0,0,3,65535,0,0,0,0,0,0,0,0,0,0,
 00100,最大HP上昇,パッシブスキル$R最大HPを上昇させる,0,5,2,0,0,0,-1,1,0,0,0,0,0,0,0,0,0,3,65535,0,0,0,0,0,0,0,0,0,0,
 00100,最大HP上昇,パッシブスキル$R最大HPを上昇させる,0,5,3,0,0,0,-1,1,0,0,0,0,0,0,0,0,0,3,65535,0,0,0,0,0,0,0,0,0,0,
