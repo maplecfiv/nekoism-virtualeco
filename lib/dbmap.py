@@ -3,9 +3,6 @@
 from general import NULL
 
 def dbstr(s): 
-	return str(s)
-
-def dbstr2(s): 
 	return s.encode("utf-8")
 
 def dbint(i):
@@ -40,8 +37,8 @@ DATABASE_ROW_MAP_RAW = {
 		u"#ItemID": (dbint, "item_id"),
 		u"PictID": (dbint, "pict_id"),
 		u"IconID": NULL,
-		u"アイテム名": (dbstr2, "name"),
-		u"種別ID": (dbstr2, "type"),
+		u"アイテム名": (dbstr, "name"),
+		u"種別ID": (dbstr, "type"),
 		u"値段": (dbint, "price"),
 		u"重量": (dbint, "weight"), #payl
 		u"容量": (dbint, "capa"),
@@ -221,8 +218,8 @@ DATABASE_ROW_MAP_RAW = {
 		u"#ItemID": (dbint, "item_id"),
 		u"PictID": (dbint, "pict_id"),
 		u"IconID": NULL,
-		u"アイテム名": (dbstr2, "name"),
-		u"種別ID": (dbstr2, "type"),
+		u"アイテム名": (dbstr, "name"),
+		u"種別ID": (dbstr, "type"),
 		u"値段": (dbint, "price"),
 		u"重量": (dbint, "weight"), #payl
 		u"容量": (dbint, "capa"),
@@ -490,7 +487,7 @@ DATABASE_ROW_MAP_RAW = {
 	},
 	"partner": {
 		u"#パートナーID": (dbint, "pet_id"),
-		u"パートナー名": (dbstr2, "name"),
+		u"パートナー名": (dbstr, "name"),
 		u"PICTID": (dbint, "pict_id"),
 		u"移動速度": (dbint, "speed"),
 	},
