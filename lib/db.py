@@ -34,12 +34,13 @@ def get_raw_dict(name):
 	)
 	return raw_dict
 
+
 def read_encoding(name, enc):
 	raw_dict = {}
 	db_path = dbmap.DATABASE_PATH[name]
 	row_map = {}
-	row_map_raw = dbmap.DATABASE_ROW_MAP_RAW[name]
-	row_map_ext = dbmap.DATABASE_ROW_MAP_EXT[name]
+	row_map_raw = dbmap.get_row_map_raw(name)
+	row_map_ext = dbmap.get_row_map_ext(name)
 	min_length = float("-inf")
 
 	with codecs.open(db_path, "r", enc) as db_file:
@@ -107,6 +108,8 @@ def load():
 	global item, job, map_obj, monster_obj, npc, pet_obj, partner_obj, shop, skill
 	item = load_database("item", data.item.Item)
 	item_tmp = load_database("item3", data.item.Item)
+	item.update(item_tmp)
+	item_tmp = load_database("item7", data.item.Item)
 	item.update(item_tmp)
 
 	job = load_database("job", data.job.Job)
