@@ -55,7 +55,7 @@ class Pet:
 		if not item:
 			return
 		self.item = {1: data_item.Item({
-			"item_id": -1,
+			"item_id": item.item_id,
 			"pict_id": item.__dict__.get("pet_pict_id") or self.pict_id,
 			"type": "HELM",
 		})}
