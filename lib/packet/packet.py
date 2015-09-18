@@ -835,7 +835,9 @@ def make_020d(pc):
 	result += pack_int(-1) #不明
 	result += pack_byte(-1) #不明
 	result += pack_short(0)
+	result += pack_short(0)
 	result += pack_int(pc.id)
+	result += pack_byte(0)
 	return result
 
 def make_0210(pc):
