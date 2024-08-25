@@ -3,7 +3,7 @@
 import sys
 import os
 import traceback
-import __builtin__
+import builtins
 import codecs
 from lib import env
 

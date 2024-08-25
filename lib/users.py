@@ -7,7 +7,7 @@ import time
 import threading
 import hashlib
 import traceback
-import ConfigParser
+from configparser import ConfigParser
 from lib import env
 PC_CONFIG_MAX = 4
 MAX_USER_ID = 10000
@@ -43,7 +43,7 @@ class User:
 		if self.pc_list:
 			general.log_error("[users] ERROR: pc_list already load.", self)
 			return
-		for i in xrange(PC_CONFIG_MAX):
+		for i in range(PC_CONFIG_MAX):
 			path = os.path.join(self.path, env.PC_CONIG_NAME%i)
 			if not os.path.exists(path):
 				self.pc_list.append(None)

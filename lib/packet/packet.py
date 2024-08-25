@@ -619,7 +619,7 @@ def make_157c(obj, state_list=None):
 	result = pack_int(obj.id)
 	if state_list is None:
 		state_list = {}
-	for i in xrange(10):
+	for i in range(10):
 		result += pack_unsigned_int(state_list.get(i) or 0)
 	return result
 

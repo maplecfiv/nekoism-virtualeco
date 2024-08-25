@@ -69,7 +69,7 @@ class Monster:
 			if self.status.hp <= 0:
 				general.log_error("[monster] monster.hp <= 0", self)
 				return 0
-			state_list = dict((j, 0) for j in xrange(10))
+			state_list = dict((j, 0) for j in range(10))
 			self.status.hp -= i
 			if self.status.hp <= 0:
 				self.status.hp = 0

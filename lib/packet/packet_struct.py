@@ -6,8 +6,7 @@ import time
 import struct
 import marshal
 import traceback
-try: from cStringIO import StringIO
-except: from StringIO import StringIO
+from io import StringIO
 
 def pack_int(i):
 	return struct.pack(">i", i)
@@ -149,7 +148,7 @@ def io_unpack_array(mod, io):
 	length = io_unpack_unsigned_byte(io)
 	if length >= 253:
 		length = io_unpack_unsigned_int(io)
-	for i in xrange(length):
+	for i in range(length):
 		array.append(mod(io))
 	return array
 

@@ -21,11 +21,10 @@ import contextlib
 import SocketServer
 import BaseHTTPServer
 import SimpleHTTPServer
-import ConfigParser
+from configparser import ConfigParser
 import Queue
-import __builtin__
-try: import cStringIO
-except: import StringIO
+import builtins
+from io import StringIO
 
 if __name__ == "__main__":
 	basedir = os.path.dirname(os.path.realpath(sys.argv[0]))

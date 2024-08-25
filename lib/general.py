@@ -11,13 +11,12 @@ import zipfile
 import hashlib
 import random
 import copy as py_copy
-import ConfigParser
+from configparser import ConfigParser
 import math
 import imp
 import threading
 import socket
-try: from cStringIO import StringIO
-except: from StringIO import StringIO
+from io import StringIO
 from lib import env
 from lib import db
 from lib import security
@@ -338,7 +337,7 @@ def save_zip(*args):
 def get_name_map(namespace, head):
 	name_map = {}
 	head_length = len(head)
-	for key, value in namespace.iteritems():
+	for key, value in namespace.items():
 		if not callable(value):
 			continue
 		if not key.startswith(head):

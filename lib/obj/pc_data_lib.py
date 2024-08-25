@@ -4,7 +4,7 @@ import sys
 import os
 import threading
 import traceback
-import ConfigParser
+from configparser import ConfigParser
 from lib import env
 from lib import general
 from lib import server

@@ -4,8 +4,8 @@ import sys
 import os
 import zipfile
 import traceback
-import __builtin__
-__open = __builtin__.open
+import builtins
+__open = builtins.open
 __listdir = os.listdir
 __remove = os.remove
 __rmdir = os.rmdir
@@ -42,7 +42,7 @@ def secure_rmdir(path, base=None):
 		raise IOError("cannot remove dir [%s] outside of [%s]"%(path, base))
 	return __rmdir(path)
 
-def secure_mkdir(path, mode=0777, base=None):
+def secure_mkdir(path, mode=0o777, base=None):
 	#sys.stderr.write("secure_mkdir [%s] (%s) within [%s]\n"%(path, mode, base))
 	if not within_base(path, base):
 		raise IOError("cannot create dir [%s] (%s) outside of [%s]"%(path, mode, base))
@@ -84,8 +84,8 @@ def __raise(e):
 def init(base):
 	global __base
 	__base = base
-	__builtin__.open = secure_open
-	__builtin__.file = secure_open
+	builtin.open = secure_open
+	builtin.file = secure_open
 	os.listdir = secure_listdir
 	os.remove = secure_remove
 	os.unlink = secure_remove

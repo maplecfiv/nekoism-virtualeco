@@ -36,7 +36,7 @@ def debugger():
 			try:
 				general.log(eval(input_debug))
 			except SyntaxError:
-				exec input_debug
+				general.log_error("[debug]", traceback.format_exc())
 		except:
 			general.log_error("[debug]", traceback.format_exc())
 

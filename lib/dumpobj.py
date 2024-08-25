@@ -212,7 +212,7 @@ def _test_data():
 	print loads("[i1, i2, i3, (s1  ), {}, i-100000000000000000000000000000000000]")
 	print [loads("l10")]
 	print loads("s11 hello world")
-	s = dumps("".join((chr(i) for i in xrange(256))))
+	s = dumps("".join((chr(i) for i in range(256))))
 	print s
 	print loads(s)
 
@@ -221,13 +221,13 @@ def _test_performance():
 	
 	start = time.time()
 	print "start dump"
-	for i in xrange(10000):
+	for i in range(10000):
 		s = dumps({-1:"0", "0":"HELLOWORLD"*100, True:100000000})
 	print time.time()-start
 	
 	start = time.time()
 	print "start load"
-	for i in xrange(10000):
+	for i in range(10000):
 		aa = loads(s)
 	print time.time()-start
 	print "done."
