@@ -51,7 +51,7 @@ def load_single(path):
 			)
 			general.save_dump(path, obj, env.SCRIPT_DIR)
 		namespace = {}
-		exec obj in namespace
+		exec(obj, namespace)
 		script_id = namespace["ID"]
 		if hasattr(script_id, "__iter__"):
 			for i in script_id:

@@ -2,10 +2,7 @@
 # -*- coding: utf-8 -*-
 #why not json or yaml: they dont support dump and load binary data
 #why not struct: difficult to edit with text editor
-try:
-	from cStringIO import StringIO
-except:
-	from StringIO import StringIO
+from io import StringIO
 
 class LoadError(Exception): pass
 class DumpError(Exception): pass
@@ -175,11 +172,9 @@ def _dump_none(i):
 	return "n"
 _dump_map = {
 	int: _dump_int,
-	long: _dump_long,
 	bool: _dump_bool,
 	float: _dump_float,
 	str: _dump_string,
-	unicode: _dump_unicode,
 	list: _dump_list,
 	dict: _dump_dict,
 	tuple: _dump_tuple,
@@ -197,40 +192,40 @@ def _test_data():
 	s = dumps({
 		"string": "abc",
 		"int": 123,
-		"long": -123L,
+		"long": -123,
 		"float": 1.01,
 		"unicode": u"abcde",
 		"dict": {
 			"dict_int": -123,
 			"dict_string": "☆★☆★☆",
 		},
-		"list": [10, 100, (101, True, None)],
+		"list": [10, 100, (101, True, NULL)],
 		0: [("", "", [])],
 	})
-	print s
-	print loads(s)
-	print loads("[i1, i2, i3, (s1  ), {}, i-100000000000000000000000000000000000]")
-	print [loads("l10")]
-	print loads("s11 hello world")
+	print (s)
+	print (loads(s))
+	print (loads("[i1, i2, i3, (s1  ), {}, i-100000000000000000000000000000000000]"))
+	print ([loads("l10")])
+	print (loads("s11 hello world"))
 	s = dumps("".join((chr(i) for i in range(256))))
-	print s
-	print loads(s)
+	print (s)
+	print (loads(s))
 
 def _test_performance():
 	import time
 	
 	start = time.time()
-	print "start dump"
+	print ("start dump")
 	for i in range(10000):
 		s = dumps({-1:"0", "0":"HELLOWORLD"*100, True:100000000})
-	print time.time()-start
+	print (time.time()-start)
 	
 	start = time.time()
-	print "start load"
+	print ("start load")
 	for i in range(10000):
 		aa = loads(s)
-	print time.time()-start
-	print "done."
+	print (time.time()-start)
+	print ("done.")
 
 if __name__ == "__main__":
 	_test_data()

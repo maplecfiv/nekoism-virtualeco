@@ -4,21 +4,20 @@ import sys
 import os
 import threading
 import time
-import SocketServer
-import BaseHTTPServer
-import SimpleHTTPServer
+import socketserver
+from http.server import BaseHTTPRequestHandler,HTTPServer,SimpleHTTPRequestHandler
 from lib import env
 from lib import general
 from lib import server
 from lib import users
 def web_open(name, mode="r", buffering=True, base=env.WEB_DIR):
 	return open(name, mode, buffering, base)
-SocketServer.open = web_open
-SocketServer.file = web_open
-BaseHTTPServer.open = web_open
-BaseHTTPServer.file = web_open
-SimpleHTTPServer.open = web_open
-SimpleHTTPServer.file = web_open
+socketserver.BaseServer.open = web_open
+socketserver.BaseServer.file = web_open
+HTTPServer.open = web_open
+HTTPServer.file = web_open
+BaseHTTPRequestHandler.open = web_open
+BaseHTTPRequestHandler.file = web_open
 #do_GET(...) -> send_head(...) -> open(...) -> copyfile(..., wfile)
 
 def parse_post(string):
@@ -46,7 +45,7 @@ def parse_post(string):
 		post_dict[key] = value
 	return post_dict
 
-class WebHandle(SimpleHTTPServer.SimpleHTTPRequestHandler):
+class WebHandle(SimpleHTTPRequestHandler):
 	def translate_path(self, path):
 		if path.find("..") != -1:
 			return ""
@@ -171,8 +170,8 @@ class WebHandle(SimpleHTTPServer.SimpleHTTPRequestHandler):
 		else:
 			return "modify password error: unknow error"
 
-class ThreadingWebServer(SocketServer.ThreadingMixIn,
-	BaseHTTPServer.HTTPServer, threading.Thread):
+class ThreadingWebServer(socketserver.ThreadingMixIn,
+	HTTPServer, threading.Thread):
 	def __init__(self, *args):
 		threading.Thread.__init__(self)
 		BaseHTTPServer.HTTPServer.__init__(self, *args)

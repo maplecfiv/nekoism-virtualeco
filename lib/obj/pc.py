@@ -791,7 +791,7 @@ class PC:
 	def reset_attack(self):
 		if not self.attack:
 			return
-		print "[ pc  ] reset_attack from %s"%traceback.extract_stack()[-2][2]
+		print(f"[ pc  ] reset_attack from {traceback.extract_stack()[-2][2]}")
 		self.attack = False
 		self.attack_target = None
 		self.attack_delay = 0

@@ -13,7 +13,7 @@ import random
 import copy as py_copy
 from configparser import ConfigParser
 import math
-import imp
+import importlib.util as import_util
 import threading
 import socket
 from io import StringIO
@@ -233,17 +233,18 @@ def init():
 	signal.signal(signal.SIGINT, lambda *args: None)
 
 def get_str(s):
-	return str(s) if type(s) != unicode else s.encode("utf-8")
+	return s.encode("utf-8")
 def get_unicode(s):
 	try:
-		return str(s).decode("utf-8") if type(s) != unicode else s
+		return s
 	except UnicodeDecodeError: #0x80+ bomb
 		return unicode(s, "latin-1")
 def get_str_log(s):
 	return get_unicode(s).encode(env.SYSTEM_ENCODING)
 
 def log(*args):
-	sys.stdout.write(" ".join(map(get_str, args))+"\n")
+	sys.stdout.write(b" ".join(map(get_str, args)))
+	sys.stdout.write("\n")
 def log_line(*args):
 	sys.stdout.write(" ".join(map(get_str, args)))
 def log_error(*args):
@@ -305,7 +306,7 @@ def load_dump(path, base=None):
 	dump_path = str(path)+".dump"
 	if not os.path.exists(dump_path):
 		return
-	magic_number = imp.get_magic()
+	magic_number = import_util.MAGIC_NUMBER
 	modify_time = struct.pack("<I", int(os.stat(path).st_mtime))
 	with open(dump_path, "rb", base=base) as dump:
 		try:
@@ -321,7 +322,7 @@ def load_dump(path, base=None):
 			log_error("dump file %s broken."%dump_path, traceback.format_exc())
 def save_dump(path, obj, base=None):
 	dump_path = str(path)+".dump"
-	magic_number = imp.get_magic()
+	magic_number = import_util.MAGIC_NUMBER
 	modify_time = struct.pack("<I", int(os.stat(path).st_mtime))
 	with open(dump_path, "wb", base=base) as dump:
 		dump.write(magic_number)
@@ -374,7 +375,7 @@ def get_prime():
 	return 175012832246148469004952309893923119007504294868274830650101802243580016468616226644476369579140157420542034349400995694097261371077961674039236035533383172308367706779425637041402045013194820474112524204508905916696893254410707373670063475235242589213472899328698912258375583335003993274863729669402122894589
 def get_private_key():
 	#server private key
-	return int(hashlib.sha512(str(time.time())).hexdigest(), 16)
+	return int(hashlib.sha512(str(time.time()).encode('utf-8')).hexdigest(), 16)
 def get_public_key(generator, private_key, prime):
 	#server public key
 	return pow(generator, private_key, prime)

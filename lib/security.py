@@ -84,8 +84,8 @@ def __raise(e):
 def init(base):
 	global __base
 	__base = base
-	builtin.open = secure_open
-	builtin.file = secure_open
+	builtins.open = secure_open
+	builtins.file = secure_open
 	os.listdir = secure_listdir
 	os.remove = secure_remove
 	os.unlink = secure_remove

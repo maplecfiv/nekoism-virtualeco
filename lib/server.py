@@ -33,11 +33,11 @@ else:
 	#general.log("prime:", PRIME_BYTES, "\nlength:", len(PRIME_BYTES))
 	#general.log("public key:", PUBLIC_KEY_BYTES, "\nlength:", len(PUBLIC_KEY_BYTES))
 	#get key exchange packet
-PACKET_KEY_EXCHANGE = "".join((
+PACKET_KEY_EXCHANGE = b"".join((
 	pack_int(0), #head
-	pack_int(len(str(GENERATOR)))+str(GENERATOR), #generator
-	pack_int(len(PRIME_BYTES))+PRIME_BYTES, #prime #std len: 0x100
-	pack_int(len(PUBLIC_KEY_BYTES))+PUBLIC_KEY_BYTES #server public key #std len: 0x100
+	pack_int(len(str(GENERATOR)))+str(GENERATOR).encode('utf-8'), #generator
+	pack_int(len(PRIME_BYTES))+PRIME_BYTES.encode('utf-8'), #prime #std len: 0x100
+	pack_int(len(PUBLIC_KEY_BYTES))+PUBLIC_KEY_BYTES.encode('utf-8') #server public key #std len: 0x100
 ))
 PACKET_INIT = "\x00\x00\x00\x00\x00\x00\x00\x10"
 PACKET_INIT_LENGTH = len(PACKET_INIT)
