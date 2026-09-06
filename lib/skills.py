@@ -5,110 +5,110 @@ import os
 import time
 import traceback
 import threading
-from lib import general
+import lib.common as common
 from lib import monsters
 from lib import db
 from lib import script
 from lib import usermaps
 
 def use(pc, target_id, x, y, skill_id, skill_lv):
-	general.log("[skill] use skill (%s, %s) -> (%s, %s, %s)"%(
-		skill_id, skill_lv, target_id, x, y,
-	))
-	mod = name_map.get(str(skill_id))
-	if mod is None:
-		skill_obj = db.skill.get(skill_id)
-		skill_name = skill_obj.name if skill_obj else "unknow"
-		script.msg(pc, "skill %s %s not define"%(skill_id, skill_name))
-		#スキル使用 #スキルを使用できません
-		pc.map_send("1389", pc, -1, x, y, skill_id, skill_lv, 13, -1)
-		#スキル使用通知 #スキルを使用できません
-		pc.map_send("138a", pc, 13)
-		return
-	general.start_thread(use_thread, (mod, pc, target_id, x, y, skill_id, skill_lv))
-	return True
+    common.log("[skill] use skill (%s, %s) -> (%s, %s, %s)"%(
+        skill_id, skill_lv, target_id, x, y,
+    ))
+    mod = name_map.get(str(skill_id))
+    if mod is None:
+        skill_obj = db.skill.get(skill_id)
+        skill_name = skill_obj.name if skill_obj else "unknow"
+        script.msg(pc, "skill %s %s not define"%(skill_id, skill_name))
+        #スキル使用 #スキルを使用できません
+        pc.map_send("1389", pc, -1, x, y, skill_id, skill_lv, 13, -1)
+        #スキル使用通知 #スキルを使用できません
+        pc.map_send("138a", pc, 13)
+        return
+    common.start_thread(use_thread, (mod, pc, target_id, x, y, skill_id, skill_lv))
+    return True
 
 def use_thread(mod, pc, target_id, x, y, skill_id, skill_lv):
-	try:
-		#with pc.lock: #remove global lock because time.sleep blocking
-		mod(pc, target_id, x, y, skill_id, skill_lv)
-	except:
-		general.log_error("[skill] error", pc, target_id, x, y, skill_id, skill_lv)
-		general.log_error(traceback.format_exc())
+    try:
+        #with pc.lock: #remove global lock because time.sleep blocking
+        mod(pc, target_id, x, y, skill_id, skill_lv)
+    except:
+        common.log_error("[skill] error", pc, target_id, x, y, skill_id, skill_lv)
+        common.log_error(traceback.format_exc())
 
 def get_monster(pc, target_id, x, y, skill_id, skill_lv):
-	monster = monsters.get_monster_from_id(target_id)
-	if monster is None:
-		#スキル使用 #ターゲットが見つかりません
-		pc.map_send("1389", pc , -1, x, y, skill_id, skill_lv, 4, -1)
-		#スキル使用通知 #ターゲットが見つかりません
-		pc.map_send("138a", pc, 4)
-		return
-	return monster
+    monster = monsters.get_monster_from_id(target_id)
+    if monster is None:
+        #スキル使用 #ターゲットが見つかりません
+        pc.map_send("1389", pc , -1, x, y, skill_id, skill_lv, 4, -1)
+        #スキル使用通知 #ターゲットが見つかりません
+        pc.map_send("138a", pc, 4)
+        return
+    return monster
 
 def start_cast(pc, target_id, x, y, skill_id, skill_lv, cast):
-	#スキル使用通知
-	pc.map_send_map("1389", pc, target_id, x, y, skill_id, skill_lv, 0, cast)
-	time.sleep(cast/1000.0)
+    #スキル使用通知
+    pc.map_send_map("1389", pc, target_id, x, y, skill_id, skill_lv, 0, cast)
+    time.sleep(cast/1000.0)
 
 def do_3054(pc, target_id, x, y, skill_id, skill_lv):
-	"""ヒーリング 対象のHPを回復する"""
-	start_cast(pc, target_id, x, y, skill_id, skill_lv, 500)
-	#スキル使用結果通知（対象：単体）, HP回復 #motion wrong, reason not found
-	pc.map_send_map("1392", pc, (target_id,), skill_id, skill_lv, (-100,), (0x11,))
-	pc.set_battlestatus(1)
+    """ヒーリング 対象のHPを回復する"""
+    start_cast(pc, target_id, x, y, skill_id, skill_lv, 500)
+    #スキル使用結果通知（対象：単体）, HP回復 #motion wrong, reason not found
+    pc.map_send_map("1392", pc, (target_id,), skill_id, skill_lv, (-100,), (0x11,))
+    pc.set_battlestatus(1)
 
 def do_3029(pc, target_id, x, y, skill_id, skill_lv):
-	"""アイスアロー 敵に水の力を持つ魔法攻撃を行う"""
-	monster = get_monster(pc, target_id, x, y, skill_id, skill_lv)
-	if monster is None:
-		return
-	start_cast(pc, target_id, x, y, skill_id, skill_lv, 500)
-	monsters.skill_attack_monster(pc, monster, 75, skill_id, skill_lv)
-	pc.set_battlestatus(1)
+    """アイスアロー 敵に水の力を持つ魔法攻撃を行う"""
+    monster = get_monster(pc, target_id, x, y, skill_id, skill_lv)
+    if monster is None:
+        return
+    start_cast(pc, target_id, x, y, skill_id, skill_lv, 500)
+    monsters.skill_attack_monster(pc, monster, 75, skill_id, skill_lv)
+    pc.set_battlestatus(1)
 
 def do_3416(pc, target_id, x, y, skill_id, skill_lv):
-	"""ウィンドエクスプロージョン 風属性の範囲攻撃魔法"""
-	start_cast(pc, target_id, x, y, skill_id, skill_lv, 1000)
-	monsters.skill_attack_coord(pc, x, y, (7, 7), 85, skill_id, skill_lv)
-	pc.set_battlestatus(1)
+    """ウィンドエクスプロージョン 風属性の範囲攻撃魔法"""
+    start_cast(pc, target_id, x, y, skill_id, skill_lv, 1000)
+    monsters.skill_attack_coord(pc, x, y, (7, 7), 85, skill_id, skill_lv)
+    pc.set_battlestatus(1)
 
 def do_3432(pc, target_id, x, y, skill_id, skill_lv):
-	"""エレメンタルレイン 指定対象周囲に４属性全ての力を持つ星の雨を発生させダメージを与える"""
-	monster = get_monster(pc, target_id, x, y, skill_id, skill_lv)
-	if monster is None:
-		return
-	start_cast(pc, target_id, x, y, skill_id, skill_lv, 1000)
-	#effect not show, wrong packet(1392) or effect id?
-	#script.effect(pc, 4387, target_id)
-	monsters.skill_attack_monster_range(pc, monster, (7, 7), 99, skill_id, skill_lv)
-	pc.set_battlestatus(1)
+    """エレメンタルレイン 指定対象周囲に４属性全ての力を持つ星の雨を発生させダメージを与える"""
+    monster = get_monster(pc, target_id, x, y, skill_id, skill_lv)
+    if monster is None:
+        return
+    start_cast(pc, target_id, x, y, skill_id, skill_lv, 1000)
+    #effect not show, wrong packet(1392) or effect id?
+    #script.effect(pc, 4387, target_id)
+    monsters.skill_attack_monster_range(pc, monster, (7, 7), 99, skill_id, skill_lv)
+    pc.set_battlestatus(1)
 
 def do_3009(pc, target_id, x, y, skill_id, skill_lv):
-	"""ファイアブラスト 対象の範囲に火焔攻撃を行う"""
-	monster = get_monster(pc, target_id, x, y, skill_id, skill_lv)
-	if monster is None:
-		return
-	start_cast(pc, target_id, x, y, skill_id, skill_lv, 500)
-	monsters.skill_attack_monster_range(pc, monster, (3, 3), 50, skill_id, skill_lv)
-	pc.set_battlestatus(1)
+    """ファイアブラスト 対象の範囲に火焔攻撃を行う"""
+    monster = get_monster(pc, target_id, x, y, skill_id, skill_lv)
+    if monster is None:
+        return
+    start_cast(pc, target_id, x, y, skill_id, skill_lv, 500)
+    monsters.skill_attack_monster_range(pc, monster, (3, 3), 50, skill_id, skill_lv)
+    pc.set_battlestatus(1)
 
 def do_2110(pc, target_id, x, y, skill_id, skill_lv):
-	"""ブロウ 相手を武器で殴りつける"""
-	monster = get_monster(pc, target_id, x, y, skill_id, skill_lv)
-	if monster is None:
-		return
-	start_cast(pc, target_id, x, y, skill_id, skill_lv, 500)
-	monsters.skill_attack_monster(pc, monster, 40, skill_id, skill_lv)
-	pc.set_battlestatus(1)
+    """ブロウ 相手を武器で殴りつける"""
+    monster = get_monster(pc, target_id, x, y, skill_id, skill_lv)
+    if monster is None:
+        return
+    start_cast(pc, target_id, x, y, skill_id, skill_lv, 500)
+    monsters.skill_attack_monster(pc, monster, 40, skill_id, skill_lv)
+    pc.set_battlestatus(1)
 
 def do_3250(pc, target_id, x, y, skill_id, skill_lv):
-	"""飛空庭のひも"""
-	usermaps.set_usermap(pc, usermaps.USERMAP_TYPE_FLYGARDEN, x, y)
-	#スキル使用結果通知（対象：地面）
-	pc.map_send_map("138d", pc, (), x, y, skill_id, skill_lv, (), ())
+    """飛空庭のひも"""
+    usermaps.set_usermap(pc, usermaps.USERMAP_TYPE_FLYGARDEN, x, y)
+    #スキル使用結果通知（対象：地面）
+    pc.map_send_map("138d", pc, (), x, y, skill_id, skill_lv, (), ())
 
-name_map = general.get_name_map(globals(), "do_")
+name_map = common.get_name_map(globals(), "do_")
 
 #skill error
 #1 MPとSPが不足しています 

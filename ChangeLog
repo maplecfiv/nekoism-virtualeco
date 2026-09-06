@@ -55,7 +55,7 @@
 
 2012-10-11
 	add pack/io_unpack array, pack/unpack/io_unpack long
-	move general.pack*/unpack*/io_unpack*, packet.pack* to packet_struct
+	move common.pack*/unpack*/io_unpack*, packet.pack* to packet_struct
 	add test skill
 	fix /effect error
 
@@ -86,7 +86,7 @@
 2012-09-27
 	add item, warehouse stock limit
 	log file use utf-8 not system encoding
-	move general.secure* to lib.security
+	move common.secure* to lib.security
 	fix ctrl+c exit error on windows
 
 2012-09-26:
@@ -139,10 +139,10 @@
 
 2012-09-01
 	add lib.version
-	pass rijndael_obj instead of rijndael_key to general.encode/decode
+	pass rijndael_obj instead of rijndael_key to common.encode/decode
 	add MAX_USER_ID, MAX_PC_ID, MAX_PET_ID, MAX_MONSTER_ID
 	fix monster.spawn/delete error
-	use general.make_id to generate user and pc id when create
+	use common.make_id to generate user and pc id when create
 	remove serveraddress from server.ini
 	add serverbindip to server.ini
 	add serverpublicip to server.ini
@@ -150,7 +150,7 @@
 
 2012-08-26
 	use system encoding for all log
-	move general.Null to general.NullClass
+	move common.Null to common.NullClass
 	remove lib/unit_test (no longer use)
 
 2012-08-24
@@ -179,7 +179,7 @@
 
 2012-07-21
 	support drop and pick up item
-	add general.make_id
+	add common.make_id
 	move monster.send_map to script.send_map
 	add script.send_map_obj(map_obj, without_list, *args)
 	add script.send_server(*args)
@@ -192,16 +192,16 @@
 	fix script.setgold, npcmotion, npcshop, npcsell affect other pc on the same map
 
 2012-07-17
-	add general.secure_open replace builtin.open
-	add general.secure_listdir replace os.listdir
-	add general.secure_remove replace os.remove
-	add general.secure_rmdir replace os.rmdir
-	add general.secure_mkdir replace os.mkdir
+	add common.secure_open replace builtin.open
+	add common.secure_listdir replace os.listdir
+	add common.secure_remove replace os.remove
+	add common.secure_rmdir replace os.rmdir
+	add common.secure_mkdir replace os.mkdir
 	disable os.link, os.symlink
-	add general.secure_rename replace os.rename
-	add general.secure_chdir
-	add general.secure_chmod replace os.chmod
-	add general.secure_chown replace os.chown
+	add common.secure_rename replace os.rename
+	add common.secure_chdir
+	add common.secure_chmod replace os.chmod
+	add common.secure_chown replace os.chown
 	disable os.chdir, os.chroot, os.mkfifo
 
 2012-07-17
@@ -225,7 +225,7 @@
 2012-07-15
 	add whisper support
 	add greeting support
-	use general.get_name_map instead of eval
+	use common.get_name_map instead of eval
 	fix MapDataHandler.send_server error
 	add script.emotion and command /emotion emotion_id
 
@@ -301,7 +301,7 @@
 	add new option: BACKUP_USER_DATA_EVERY_DAY (default value: False)
 
 2012-01-02
-	general.log, logerr
+	common.log, logerr
 
 2012-01-02
 	pet.set_coord_from_master

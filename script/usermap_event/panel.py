@@ -2,37 +2,37 @@
 # -*- coding: utf-8 -*-
 import random
 from lib import script
-from lib import general
+import lib.common as common
 from lib import usermaps
 ID = 12001110 #操舵輪
 
 def master_event(pc, usermap_obj):
-	r = script.select(pc, ("leave", "cancel"), "master panel")
-	if r == 1:
-		script.warp(
-			pc,
-			usermap_obj.entrance_map_id,
-			usermap_obj.entrance_x,
-			usermap_obj.entrance_y,
-		)
+    r = script.select(pc, ("leave", "cancel"), "master panel")
+    if r == 1:
+        script.warp(
+            pc,
+            usermap_obj.entrance_map_id,
+            usermap_obj.entrance_x,
+            usermap_obj.entrance_y,
+        )
 
 def guest_event(pc, usermap_obj):
-	r = script.select(pc, ("leave", "cancel"), "guest panel")
-	if r == 1:
-		script.warp(
-			pc,
-			usermap_obj.entrance_map_id,
-			usermap_obj.entrance_x,
-			usermap_obj.entrance_y,
-		)
+    r = script.select(pc, ("leave", "cancel"), "guest panel")
+    if r == 1:
+        script.warp(
+            pc,
+            usermap_obj.entrance_map_id,
+            usermap_obj.entrance_x,
+            usermap_obj.entrance_y,
+        )
 
 def main(pc):
-	usermap_obj = usermaps.get_usermap_from_map_id(pc.map_obj.map_id)
-	if not usermap_obj:
-		script.msg(pc, "rope error: usermap id %s not exist"%pc.map_obj.map_id)
-		return
-	general.log(usermap_obj.master, pc)
-	if usermap_obj.master == pc:
-		master_event(pc, usermap_obj)
-	else:
-		guest_event(pc, usermap_obj)
+    usermap_obj = usermaps.get_usermap_from_map_id(pc.map_obj.map_id)
+    if not usermap_obj:
+        script.msg(pc, "rope error: usermap id %s not exist"%pc.map_obj.map_id)
+        return
+    common.log(usermap_obj.master, pc)
+    if usermap_obj.master == pc:
+        master_event(pc, usermap_obj)
+    else:
+        guest_event(pc, usermap_obj)

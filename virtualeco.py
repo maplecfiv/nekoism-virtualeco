@@ -16,65 +16,65 @@ from lib import monsters
 from lib import usermaps
 from lib import script
 from lib import web
-from lib import general
+import lib.common as common
 
 def debugger():
-	general.log("[debug] load time %s"%(time.time()-env.LOAD_STARTUP_TIME))
-	general.log("[debug] interpreter start")
-	while True:
-		try:
-			input_debug = raw_input()
-			if input_debug in ("exit", "halt", "quit", "q"):
-				raise SystemExit()
-		except (SystemExit, EOFError, IOError, KeyboardInterrupt):
-			if raw_input("Are you sure to exit? [y/N]: ").strip().lower() == "y":
-				return
-			continue
-		except:
-			general.log_error("[debug]", traceback.format_exc())
-		try:
-			try:
-				general.log(eval(input_debug))
-			except SyntaxError:
-				general.log_error("[debug]", traceback.format_exc())
-		except:
-			general.log_error("[debug]", traceback.format_exc())
+    common.log("[debug] load time %s"%(time.time()-env.LOAD_STARTUP_TIME))
+    common.log("[debug] interpreter start")
+    while True:
+        try:
+            input_debug = raw_input()
+            if input_debug in ("exit", "halt", "quit", "q"):
+                raise SystemExit()
+        except (SystemExit, EOFError, IOError, KeyboardInterrupt):
+            if raw_input("Are you sure to exit? [y/N]: ").strip().lower() == "y":
+                return
+            continue
+        except:
+            common.log_error("[debug]", traceback.format_exc())
+        try:
+            try:
+                common.log(eval(input_debug))
+            except SyntaxError:
+                common.log_error("[debug]", traceback.format_exc())
+        except:
+            common.log_error("[debug]", traceback.format_exc())
 
 def atexit():
-	server.mapserver._shutdown()
-	server.loginserver._shutdown()
-	if env.BACKUP_USER_DATA_EVERY_DAY:
-		users.backup_user_data()
-	users.save_user_data_atexit()
-	os._exit(0)
+    server.mapserver._shutdown()
+    server.loginserver._shutdown()
+    if env.BACKUP_USER_DATA_EVERY_DAY:
+        users.backup_user_data()
+    users.save_user_data_atexit()
+    os._exit(0)
 
 def init():
-	general.init()
-	general.log("-"*30+"\n", env.NAME, env.LAST_UPDATE, "\n"+"-"*30)
-	server.init()
-	pets.init()
-	monsters.init()
-	usermaps.init()
+    common.init()
+    common.log("-"*30+"\n", env.NAME, env.LAST_UPDATE, "\n"+"-"*30)
+    server.init()
+    pets.init()
+    monsters.init()
+    usermaps.init()
 
 def load():
-	env.LOAD_STARTUP_TIME = time.time()
-	db.load()
-	script.load()
-	users.load()
-	server.load()
-	web.load()
+    env.LOAD_STARTUP_TIME = time.time()
+    db.load()
+    script.load()
+    users.load()
+    server.load()
+    web.load()
 
 def block():
-	if env.USE_DEBUGER:
-		debugger()
-		return
-	try:
-		while time.sleep(1) or 1: pass
-	except:
-		return
+    if env.USE_DEBUGER:
+        debugger()
+        return
+    try:
+        while time.sleep(1) or 1: pass
+    except:
+        return
 
 if __name__ == "__main__":
-	init()
-	load()
-	block()
-	atexit()
+    init()
+    load()
+    block()
+    atexit()
